@@ -124,3 +124,4 @@ export const BackgroundAtmosphere: React.FC<BackgroundAtmosphereProps> = ({
     </div>
   );
 };
+

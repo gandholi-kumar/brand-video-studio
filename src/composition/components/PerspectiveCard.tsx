@@ -85,3 +85,4 @@ export const PerspectiveCard: React.FC<PerspectiveCardProps> = ({
     </div>
   );
 };
+

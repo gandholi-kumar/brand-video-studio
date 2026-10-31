@@ -62,3 +62,4 @@ export const CinematicCamera: React.FC<CinematicCameraProps> = ({
     </div>
   );
 };
+

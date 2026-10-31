@@ -47,3 +47,4 @@ describe('FileSystemStorageAdapter', () => {
     assert.equal(dir1, dir2, 'Must return the same allocated path for repeated calls in one run');
   });
 });
+

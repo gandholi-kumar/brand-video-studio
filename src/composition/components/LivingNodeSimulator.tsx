@@ -172,3 +172,4 @@ export const LivingNodeSimulator: React.FC<LivingNodeSimulatorProps> = ({
     </div>
   );
 };
+
