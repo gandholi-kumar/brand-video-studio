@@ -71,3 +71,4 @@ describe('Storyboard Value Object', () => {
     }, /Storyboard must contain at least one scene/);
   });
 });
+

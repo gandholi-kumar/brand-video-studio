@@ -43,3 +43,4 @@ describe('VideoDeliverable Entity', () => {
     assert.equal(deliverable.isComplete(), false);
   });
 });
+

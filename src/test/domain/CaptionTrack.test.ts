@@ -34,3 +34,4 @@ describe('CaptionTrack Value Object', () => {
     assert.equal(track.getFullTranscript(), '');
   });
 });
+

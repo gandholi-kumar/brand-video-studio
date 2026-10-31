@@ -59,3 +59,4 @@ describe('BrandProject Entity', () => {
     assert.deepEqual(project.visuals, []);
   });
 });
+
