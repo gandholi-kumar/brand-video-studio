@@ -237,3 +237,4 @@ Because the studio is built on Hexagonal Architecture, swapping an adapter requi
 ### Issue 4: Rendered MP4 Video has No Audio
 - **Cause:** The raw Remotion renderer (`remotion.mp4`) only outputs video frames if no `<Audio />` node was active or if rendering without post-processing.
 - **Solution:** Use [`FfmpegPostProcessorAdapter`](file:///H:/Projects/brand-video-studio/src/adapters/driven/postprocessor/FfmpegPostProcessorAdapter.ts) to mux `soundtrack.mp3` with AAC audio and 2-second fade-out into the final `brag.mp4`.
+
