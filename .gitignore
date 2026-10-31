@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build and Production Outputs
+dist/
+build/
+output/
+.remotion/
+
+# Environment and Credentials
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Speech Models & Pre-compiled Binaries (tools/whisper)
+tools/whisper/Release/*.exe
+tools/whisper/Release/*.dll
+tools/whisper/*.bin
+tools/whisper/*.zip
+tools/whisper/*.tar.gz
+
+# Media downloads & temporary parts
+*.tmp
+*.temp
+*.part
+*.ytdl
+
+# Puppeteer / Headless Browser Cache
+.cache/
+.local-chromium/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# IDE & Editor Configurations
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
