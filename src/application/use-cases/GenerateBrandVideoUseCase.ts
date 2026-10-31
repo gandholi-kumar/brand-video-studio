@@ -100,6 +100,10 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
     const height = isVertical ? 1920 : 1080;
     const compositionId = isVertical ? 'BrandVideo-Portrait' : 'BrandVideo-Landscape';
 
+    const charInput = command.character?.trim();
+    const isCharEnabled = charInput !== 'none';
+    const charType = charInput || 'developer-model-sheet.jpg';
+
     // Route intermediate raw render to internal .work/ directory
     const rawVideoPath = `${projectDir}/.work/raw-render.mp4`;
     await this.deps.videoRenderer.render(project, storyboard, captions, {
@@ -111,8 +115,9 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
       outputFilePath: rawVideoPath,
       compositionId,
       character: {
-        enabled: command.character !== 'none',
-        type: command.character === 'mascot' ? 'mascot' : 'coder'
+        enabled: isCharEnabled,
+        type: charType,
+        imagePath: charType
       }
     });
 
@@ -132,8 +137,8 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
       format: command.format || 'landscape',
       tone: project.tone,
       character: {
-        enabled: command.character !== 'none',
-        type: command.character === 'mascot' ? 'mascot' : 'coder'
+        enabled: isCharEnabled,
+        type: charType
       },
       colors: project.colors,
       typography: project.typography,

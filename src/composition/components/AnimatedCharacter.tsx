@@ -1,20 +1,24 @@
 import React from 'react';
-import { useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
-
-export type CharacterType = 'coder' | 'mascot';
+import { useCurrentFrame, useVideoConfig, spring, interpolate, Img, staticFile } from 'remotion';
 
 export interface AnimatedCharacterProps {
-  type?: CharacterType;
+  type?: string;
+  imagePath?: string;
   accentColor?: string;
   size?: number;
   flipHorizontal?: boolean;
+  pose?: 'front' | 'side' | 'back' | 'auto';
+  label?: string;
 }
 
 export const AnimatedCharacter: React.FC<AnimatedCharacterProps> = ({
-  type = 'coder',
+  type = '',
+  imagePath,
   accentColor = '#f59e0b',
   size = 320,
-  flipHorizontal = false
+  flipHorizontal = false,
+  pose = 'front',
+  label
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -31,16 +35,124 @@ export const AnimatedCharacter: React.FC<AnimatedCharacterProps> = ({
   // Gentle continuous breathing/bobbing (sine wave)
   const floatY = Math.sin((frame / fps) * 3) * 10;
 
-  // Eye blinking logic: close for 4 frames every 90 frames (~3s)
+  // Eye blinking logic
   const isBlinking = frame % 90 >= 86;
 
-  // Arm/Hands animation
-  const typingOscillation = Math.sin((frame / fps) * 16) * 12;
+  // Wave / Thruster pulse
   const waveAngle = Math.sin((frame / fps) * 8) * 20;
-
-  // Antenna / Screen glow pulse
   const pulseOpacity = interpolate(Math.sin((frame / fps) * 4), [-1, 1], [0.4, 0.9]);
 
+  // Determine if a custom user image was supplied
+  const effectiveImage = imagePath || (type && (type.includes('.') || type.includes('/') || type.includes('\\')) ? type : undefined);
+  const isCustomImage = Boolean(effectiveImage);
+
+  // =========================================================================
+  // 1. DYNAMIC USER-PROVIDED CHARACTER (IMAGE / MODEL SHEET / AVATAR)
+  // =========================================================================
+  if (isCustomImage && effectiveImage) {
+    const isModelSheet = effectiveImage.includes('sheet') || effectiveImage.includes('developer');
+    const imageSrc = effectiveImage.startsWith('http') || effectiveImage.startsWith('data:')
+      ? effectiveImage
+      : staticFile(effectiveImage);
+
+    return (
+      <div
+        style={{
+          width: size * 0.62,
+          height: size * 1.15,
+          opacity: introOpacity,
+          transform: `translateY(${floatY}px) scale(${introScale}) scaleX(${flipHorizontal ? -1 : 1})`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative'
+        }}
+      >
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
+            borderRadius: 24,
+            border: `2px solid ${accentColor}55`,
+            backgroundColor: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(16px)',
+            boxShadow: `0 25px 50px rgba(0, 0, 0, 0.8), 0 0 35px ${accentColor}33`,
+            filter: 'drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6))'
+          }}
+        >
+          {/* Cybernetic Ambient Halo */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '15%',
+              left: '50%',
+              width: '80%',
+              height: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: `radial-gradient(circle, ${accentColor}44 0%, transparent 75%)`,
+              filter: 'blur(20px)',
+              pointerEvents: 'none'
+            }}
+          />
+
+          {isModelSheet ? (
+            /* Multi-pose character sheet crop */
+            <Img
+              src={imageSrc}
+              style={{
+                position: 'absolute',
+                width: size * 2.8,
+                height: 'auto',
+                maxWidth: 'none',
+                left: pose === 'side' ? -(size * 1.1) : pose === 'back' ? -(size * 1.75) : -(size * 0.4),
+                top: -(size * 0.32),
+                filter: 'contrast(1.08) brightness(1.04)'
+              }}
+            />
+          ) : (
+            /* Single avatar / standalone character image */
+            <Img
+              src={imageSrc}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                filter: 'contrast(1.05) brightness(1.02)'
+              }}
+            />
+          )}
+
+          {/* Optional Telemetry Badge */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 8,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              padding: '3px 10px',
+              borderRadius: 10,
+              backgroundColor: 'rgba(9, 13, 22, 0.85)',
+              border: `1px solid ${accentColor}66`,
+              color: accentColor,
+              fontSize: 11,
+              fontWeight: 800,
+              letterSpacing: '0.06em',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {label || (pose === 'back' ? 'SYSTEM DIAGNOSTIC' : pose === 'side' ? 'LIVE SESSION' : 'LEAD ARCHITECT')}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // 2. DEFAULT FALLBACK: PROCEDURAL ANIME ROBOT MASCOT
+  // (Used when user provides no character image)
+  // =========================================================================
   return (
     <div
       style={{
@@ -55,117 +167,46 @@ export const AnimatedCharacter: React.FC<AnimatedCharacterProps> = ({
       }}
     >
       <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {type === 'coder' ? (
-          /* ================= CODER BOT MASCOT ================= */
-          <g>
-            {/* Ambient Body Shadow */}
-            <ellipse cx="100" cy="180" rx="45" ry="8" fill="rgba(0,0,0,0.3)" />
+        <g>
+          {/* Thruster Flame / Energy Pulse */}
+          <ellipse cx="100" cy="165" rx="16" ry="12" fill={accentColor} opacity={pulseOpacity * 0.8} />
+          <ellipse cx="100" cy="162" rx="9" ry="7" fill="#ffffff" opacity={pulseOpacity} />
 
-            {/* Droid Body */}
-            <rect x="65" y="90" width="70" height="65" rx="18" fill="#1e293b" stroke="#334155" strokeWidth="3" />
-            <rect x="75" y="102" width="50" height="35" rx="10" fill="#0f172a" stroke={`${accentColor}55`} strokeWidth="1.5" />
-            {/* Chest telemetry lines */}
-            <line x1="82" y1="114" x2="118" y2="114" stroke={accentColor} strokeWidth="2" strokeLinecap="round" opacity={pulseOpacity} />
-            <line x1="82" y1="122" x2="105" y2="122" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
+          {/* Droid Spherical Head & Torso */}
+          <circle cx="100" cy="95" r="50" fill="#1e293b" stroke="#475569" strokeWidth="3" />
+          <ellipse cx="100" cy="95" rx="42" ry="24" fill="#090d16" stroke={`${accentColor}55`} strokeWidth="2" />
 
-            {/* Droid Head */}
-            <rect x="55" y="35" width="90" height="60" rx="20" fill="#1e293b" stroke="#475569" strokeWidth="3" />
-            
-            {/* Screen Visor */}
-            <rect x="65" y="45" width="70" height="38" rx="12" fill="#090d16" stroke={`${accentColor}66`} strokeWidth="2" />
+          {/* Eye Ring & Pupils */}
+          {!isBlinking ? (
+            <>
+              <circle cx="82" cy="95" r="9" fill={accentColor} />
+              <circle cx="84" cy="93" r="3" fill="#ffffff" />
+              <circle cx="118" cy="95" r="9" fill={accentColor} />
+              <circle cx="120" cy="93" r="3" fill="#ffffff" />
+            </>
+          ) : (
+            <>
+              <line x1="74" y1="95" x2="90" y2="95" stroke={accentColor} strokeWidth="3" strokeLinecap="round" />
+              <line x1="110" y1="95" x2="126" y2="95" stroke={accentColor} strokeWidth="3" strokeLinecap="round" />
+            </>
+          )}
 
-            {/* Eyes */}
-            {!isBlinking ? (
-              <>
-                <circle cx="85" cy="64" r="7" fill={accentColor} />
-                <circle cx="87" cy="62" r="2.5" fill="#ffffff" />
-                <circle cx="115" cy="64" r="7" fill={accentColor} />
-                <circle cx="117" cy="62" r="2.5" fill="#ffffff" />
-              </>
-            ) : (
-              <>
-                <line x1="77" y1="64" x2="93" y2="64" stroke={accentColor} strokeWidth="3" strokeLinecap="round" />
-                <line x1="107" y1="64" x2="123" y2="64" stroke={accentColor} strokeWidth="3" strokeLinecap="round" />
-              </>
-            )}
+          {/* Antenna with dual nodes */}
+          <line x1="88" y1="46" x2="78" y2="28" stroke="#64748b" strokeWidth="3" />
+          <circle cx="78" cy="28" r="5" fill="#06b6d4" opacity={pulseOpacity} />
+          <line x1="112" y1="46" x2="122" y2="28" stroke="#64748b" strokeWidth="3" />
+          <circle cx="122" cy="28" r="5" fill={accentColor} opacity={pulseOpacity} />
 
-            {/* Antenna */}
-            <line x1="100" y1="35" x2="100" y2="18" stroke="#64748b" strokeWidth="3" />
-            <circle cx="100" cy="15" r="6" fill={accentColor} opacity={pulseOpacity} />
-
-            {/* Animated Typing Arms & Laptop */}
-            <g transform={`translate(0, ${typingOscillation * 0.2})`}>
-              {/* Laptop Screen & Base */}
-              <rect x="68" y="130" width="64" height="38" rx="4" fill="#0f172a" stroke="#475569" strokeWidth="2" />
-              <rect x="74" y="134" width="52" height="26" rx="2" fill="#090d16" />
-              {/* Code lines on screen */}
-              <line x1="78" y1="140" x2="100" y2="140" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
-              <line x1="78" y1="146" x2="114" y2="146" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
-              <line x1="78" y1="152" x2="94" y2="152" stroke={accentColor} strokeWidth="2" strokeLinecap="round" />
-              {/* Laptop Keyboard Lip */}
-              <polygon points="62,168 138,168 130,174 70,174" fill="#334155" />
-
-              {/* Left Arm / Hand typing */}
-              <path
-                d={`M 55 110 Q 50 145 74 ${160 + typingOscillation * 0.5}`}
-                stroke="#64748b"
-                strokeWidth="7"
-                strokeLinecap="round"
-                fill="none"
-              />
-              {/* Right Arm / Hand typing */}
-              <path
-                d={`M 145 110 Q 150 145 126 ${160 - typingOscillation * 0.5}`}
-                stroke="#64748b"
-                strokeWidth="7"
-                strokeLinecap="round"
-                fill="none"
-              />
-            </g>
+          {/* Waving Right Hand */}
+          <g transform={`rotate(${waveAngle} 150 95)`}>
+            <path d="M 148 95 Q 165 85 170 70" stroke="#64748b" strokeWidth="7" strokeLinecap="round" fill="none" />
+            <circle cx="170" cy="70" r="7" fill={accentColor} />
           </g>
-        ) : (
-          /* ================= FLOATING FRIENDLY DROID MASCOT ================= */
-          <g>
-            {/* Thruster Flame/Energy Pulse */}
-            <ellipse cx="100" cy="165" rx="16" ry="12" fill={accentColor} opacity={pulseOpacity * 0.8} />
-            <ellipse cx="100" cy="162" rx="9" ry="7" fill="#ffffff" opacity={pulseOpacity} />
 
-            {/* Droid Spherical Head & Torso */}
-            <circle cx="100" cy="95" r="50" fill="#1e293b" stroke="#475569" strokeWidth="3" />
-            <ellipse cx="100" cy="95" rx="42" ry="24" fill="#090d16" stroke={`${accentColor}55`} strokeWidth="2" />
-
-            {/* Eye Ring & Pupils */}
-            {!isBlinking ? (
-              <>
-                <circle cx="82" cy="95" r="9" fill={accentColor} />
-                <circle cx="84" cy="93" r="3" fill="#ffffff" />
-                <circle cx="118" cy="95" r="9" fill={accentColor} />
-                <circle cx="120" cy="93" r="3" fill="#ffffff" />
-              </>
-            ) : (
-              <>
-                <line x1="74" y1="95" x2="90" y2="95" stroke={accentColor} strokeWidth="3" strokeLinecap="round" />
-                <line x1="110" y1="95" x2="126" y2="95" stroke={accentColor} strokeWidth="3" strokeLinecap="round" />
-              </>
-            )}
-
-            {/* Antenna with dual nodes */}
-            <line x1="88" y1="46" x2="78" y2="28" stroke="#64748b" strokeWidth="3" />
-            <circle cx="78" cy="28" r="5" fill="#06b6d4" opacity={pulseOpacity} />
-            <line x1="112" y1="46" x2="122" y2="28" stroke="#64748b" strokeWidth="3" />
-            <circle cx="122" cy="28" r="5" fill={accentColor} opacity={pulseOpacity} />
-
-            {/* Waving Right Hand */}
-            <g transform={`rotate(${waveAngle} 150 95)`}>
-              <path d="M 148 95 Q 165 85 170 70" stroke="#64748b" strokeWidth="7" strokeLinecap="round" fill="none" />
-              <circle cx="170" cy="70" r="7" fill={accentColor} />
-            </g>
-
-            {/* Left Resting Arm */}
-            <path d="M 52 95 Q 38 115 48 130" stroke="#64748b" strokeWidth="7" strokeLinecap="round" fill="none" />
-            <circle cx="48" cy="130" r="6" fill="#475569" />
-          </g>
-        )}
+          {/* Left Resting Arm */}
+          <path d="M 52 95 Q 38 115 48 130" stroke="#64748b" strokeWidth="7" strokeLinecap="round" fill="none" />
+          <circle cx="48" cy="130" r="6" fill="#475569" />
+        </g>
       </svg>
     </div>
   );

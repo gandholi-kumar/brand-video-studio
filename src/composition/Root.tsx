@@ -15,7 +15,7 @@ const defaultProps = {
   captions: [],
   character: {
     enabled: true,
-    type: 'coder' as const
+    imagePath: 'developer-model-sheet.jpg'
   }
 };
 

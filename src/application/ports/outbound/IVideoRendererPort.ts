@@ -12,7 +12,8 @@ export interface RenderConfig {
   compositionId?: string;
   character?: {
     enabled: boolean;
-    type: 'coder' | 'mascot';
+    type?: string;
+    imagePath?: string;
   };
 }
 

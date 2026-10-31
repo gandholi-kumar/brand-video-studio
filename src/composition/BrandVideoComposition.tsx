@@ -10,7 +10,7 @@ import {
   staticFile
 } from 'remotion';
 import { KineticCaptions, WordToken } from './components/KineticCaptions';
-import { AnimatedCharacter, CharacterType } from './components/AnimatedCharacter';
+import { AnimatedCharacter } from './components/AnimatedCharacter';
 import { CinematicCamera } from './components/CinematicCamera';
 import { PerspectiveCard } from './components/PerspectiveCard';
 import { BackgroundAtmosphere } from './components/BackgroundAtmosphere';
@@ -27,7 +27,10 @@ export interface SerializedScene {
 
 export interface CharacterConfig {
   enabled?: boolean;
-  type?: CharacterType;
+  type?: string;
+  imagePath?: string;
+  pose?: 'front' | 'side' | 'back' | 'auto';
+  label?: string;
   size?: number;
 }
 
@@ -174,6 +177,18 @@ export const BrandVideoComposition: React.FC<BrandVideoProps> = ({
                 hookTitle
               )}
             </h1>
+
+            {/* In 9:16 portrait, display the Developer character looking at the messy code */}
+            {isPortrait && character?.enabled && (
+              <div style={{ marginBottom: 20 }}>
+                <AnimatedCharacter
+                  type={character.type || 'developer'}
+                  pose="back"
+                  accentColor="#ef4444"
+                  size={180}
+                />
+              </div>
+            )}
 
             {/* Chaotic Scrolling Code Stream */}
             <PerspectiveCard
@@ -392,6 +407,18 @@ export const BrandVideoComposition: React.FC<BrandVideoProps> = ({
               </h2>
             </div>
 
+            {/* In 9:16 portrait, display the Developer character observing the live execution */}
+            {isPortrait && character?.enabled && (
+              <div style={{ marginBottom: 16 }}>
+                <AnimatedCharacter
+                  type={character.type || 'developer'}
+                  pose="side"
+                  accentColor={colors.accent}
+                  size={190}
+                />
+              </div>
+            )}
+
             <PerspectiveCard
               width={isPortrait ? 940 : 1150}
               rotateX={6}
@@ -421,11 +448,12 @@ export const BrandVideoComposition: React.FC<BrandVideoProps> = ({
               padding: isPortrait ? '0 30px' : '0'
             }}
           >
-            {/* Celebrating Mascot */}
+            {/* Celebrating Mascot / Developer Character */}
             {character?.enabled && (
               <div style={{ marginBottom: 16 }}>
                 <AnimatedCharacter
-                  type="mascot"
+                  type={character.type || 'developer'}
+                  pose="front"
                   accentColor={colors.accent}
                   size={isPortrait ? 260 : 220}
                 />

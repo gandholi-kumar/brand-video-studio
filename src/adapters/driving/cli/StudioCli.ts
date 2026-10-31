@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 import { createStudioContainer } from '../../../container.js';
 
 async function main(): Promise<void> {
@@ -15,7 +16,7 @@ Usage:
 
 Options:
   --format <landscape|vertical>     Aspect ratio: 16:9 Landscape (default) or 9:16 Portrait for Shorts/Reels/TikTok
-  --character <coder|mascot|none>   Include animated character (default: coder)
+  --character <path-to-image|none>  Custom character image, model sheet, or 'none' (default: dynamic / anime robot fallback)
   --tone <cinematic|playful|fast>   Narrative style & music mood (default: cinematic)
   --concurrency <1-4>               Render worker concurrency (default: 1 for low RAM)
 `);
@@ -25,7 +26,7 @@ Options:
   let url = '';
   let tone = 'cinematic';
   let format: 'landscape' | 'vertical' = 'landscape';
-  let character: 'coder' | 'mascot' | 'none' = 'coder';
+  let character = '';
 
   if (configArgIndex !== -1 && args[configArgIndex + 1]) {
     const configPath = args[configArgIndex + 1];
@@ -35,7 +36,7 @@ Options:
     tone = parsed.tone || tone;
     format = parsed.format === 'vertical' ? 'vertical' : 'landscape';
     if (parsed.character) {
-      character = parsed.character.enabled === false ? 'none' : (parsed.character.type || 'coder');
+      character = parsed.character.enabled === false ? 'none' : (parsed.character.type || parsed.character.imagePath || '');
     }
   }
 
@@ -56,8 +57,23 @@ Options:
 
   const charIndex = args.indexOf('--character');
   if (charIndex !== -1 && args[charIndex + 1]) {
-    const rawChar = args[charIndex + 1].toLowerCase();
-    character = rawChar === 'mascot' ? 'mascot' : rawChar === 'none' ? 'none' : 'coder';
+    character = args[charIndex + 1];
+  }
+
+  // If a local image file was passed, copy it to public/ for Remotion static asset serving
+  if (character && character !== 'none') {
+    try {
+      const charPath = path.resolve(character);
+      const stat = await fs.stat(charPath);
+      if (stat.isFile()) {
+        const ext = path.extname(charPath);
+        const destName = `user-character${ext}`;
+        await fs.copyFile(charPath, path.join('public', destName));
+        character = destName;
+      }
+    } catch {
+      // Keep as-is if already in public or not a direct file path
+    }
   }
 
   console.log(`[Studio] Launching autonomous brand video generation:`);
