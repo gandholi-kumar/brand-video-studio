@@ -95,14 +95,20 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
     }
 
     // 5. Render Video via Renderer Port
+    const isVertical = command.format === 'vertical';
+    const width = isVertical ? 1080 : 1920;
+    const height = isVertical ? 1920 : 1080;
+    const compositionId = isVertical ? 'BrandVideo-Portrait' : 'BrandVideo-Landscape';
+
     const rawVideoPath = `${projectDir}/raw-render.mp4`;
     await this.deps.videoRenderer.render(project, storyboard, captions, {
       fps: 30,
-      width: 1920,
-      height: 1080,
+      width,
+      height,
       concurrency,
       quality: 'delivery',
-      outputFilePath: rawVideoPath
+      outputFilePath: rawVideoPath,
+      compositionId
     });
 
     // 6. Post-Processing: Extract settled frame, mux audio, and bake frame 0
@@ -112,6 +118,29 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
 
     await this.deps.postProcessor.extractPosterFrame(rawVideoPath, 18.5, posterPath);
     await this.deps.postProcessor.bakePosterAndMuxAudio(rawVideoPath, posterPath, audioTrackPath, finalVideoPath);
+
+    // 7. Save Resolved Brand Config for Instant Customization & Re-rendering
+    const configSnapshot = {
+      projectName: project.name,
+      url: project.url,
+      tagline: project.tagline,
+      format: command.format || 'landscape',
+      tone: project.tone,
+      character: {
+        enabled: command.character !== 'none',
+        type: command.character === 'mascot' ? 'mascot' : 'coder'
+      },
+      colors: project.colors,
+      typography: project.typography,
+      scenes: storyboard.scenes.map((s) => ({
+        id: s.id,
+        type: s.type,
+        title: s.title,
+        subtitle: s.subtitle,
+        durationSeconds: s.durationSeconds
+      }))
+    };
+    await this.deps.storage.saveTextFile(project.slug, 'brand.config.json', JSON.stringify(configSnapshot, null, 2));
 
     // 7. Generate Platform-Ready Share Copy
     const shareCopyText = isGofApp

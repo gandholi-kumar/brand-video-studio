@@ -5,6 +5,7 @@ export interface GenerateBrandVideoCommand {
   tone?: string;
   durationSeconds?: number;
   format?: 'landscape' | 'vertical' | 'square';
+  character?: 'coder' | 'mascot' | 'none';
   concurrency?: number;
 }
 

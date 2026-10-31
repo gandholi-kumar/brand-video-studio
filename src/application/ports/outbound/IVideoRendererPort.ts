@@ -9,6 +9,7 @@ export interface RenderConfig {
   concurrency: number;
   quality: 'draft' | 'delivery';
   outputFilePath: string;
+  compositionId?: string;
 }
 
 export interface RenderResult {

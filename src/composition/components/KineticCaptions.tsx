@@ -19,7 +19,8 @@ export const KineticCaptions: React.FC<KineticCaptionsProps> = ({
   textColor = '#ffffff'
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
+  const isPortrait = height > width;
   const currentTime = frame / fps;
 
   if (!words || words.length === 0) {
@@ -51,7 +52,7 @@ export const KineticCaptions: React.FC<KineticCaptionsProps> = ({
     <div
       style={{
         position: 'absolute',
-        bottom: 120,
+        bottom: isPortrait ? 240 : 120,
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
@@ -64,7 +65,7 @@ export const KineticCaptions: React.FC<KineticCaptionsProps> = ({
           backgroundColor: 'rgba(9, 13, 22, 0.85)',
           border: `2px solid ${accentColor}`,
           borderRadius: 16,
-          padding: '16px 36px',
+          padding: isPortrait ? '12px 28px' : '16px 36px',
           boxShadow: `0 0 40px ${accentColor}44`,
           transform: `scale(${scale})`,
           transition: 'transform 0.05s ease-out'
@@ -74,7 +75,7 @@ export const KineticCaptions: React.FC<KineticCaptionsProps> = ({
           style={{
             color: textColor,
             fontFamily: 'Inter, system-ui, sans-serif',
-            fontSize: 48,
+            fontSize: isPortrait ? 38 : 48,
             fontWeight: 800,
             letterSpacing: '-0.02em',
             textTransform: 'uppercase'

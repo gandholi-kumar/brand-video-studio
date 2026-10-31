@@ -2,8 +2,8 @@
 
 # 🎬 Brand Video Studio
 
-**Autonomous, \$0-cost programmatic brand video generation engine.**  
-*Built with React 19, Remotion, Hyperframes, whisper.cpp, yt-dlp, and FFmpeg.*
+**Autonomous, $0-cost programmatic brand video generation engine.**  
+*Built with React 19, Remotion, whisper.cpp, yt-dlp, and FFmpeg.*
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19.0-61dafb.svg?logo=react)](https://react.dev/)
@@ -12,93 +12,184 @@
 [![whisper.cpp](https://img.shields.io/badge/whisper.cpp-b5454-purple.svg)](https://github.com/ggerganov/whisper.cpp)
 [![yt--dlp](https://img.shields.io/badge/yt--dlp-2024.10-red.svg)](https://github.com/yt-dlp/yt-dlp)
 [![Architecture](https://img.shields.io/badge/Architecture-Hexagonal%20Ports%20%26%20Adapters-brightgreen.svg)](docs/architecture.md)
-[![Cost](https://img.shields.io/badge/Cost-%240%20(100%25%20Local)-gold.svg)](#why-brand-video-studio)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
+  <a href="#why-brand-video-studio-repo-vs-ai-skill">Why This Repo vs AI Skill</a> •
   <a href="#key-features">Key Features</a> •
+  <a href="#multi-format-support-169--916">16:9 & 9:16 Formats</a> •
+  <a href="#animated-characters--motion-graphics">Characters & Motion</a> •
+  <a href="#customizing-your-video">Customization</a> •
+  <a href="#audio-intelligence--music-tracks">Audio & Music</a> •
   <a href="#quick-start">Quick Start</a> •
-  <a href="#architecture">Architecture</a> •
-  <a href="#cli-usage">CLI Usage</a> •
-  <a href="#deliverables">Deliverables</a> •
-  <a href="docs/architecture.md">Architecture Deep Dive</a> •
-  <a href="docs/developer-setup.md">Developer Runbook</a>
+  <a href="#cli-usage">CLI Usage</a>
 </p>
 
 </div>
 
 ---
 
-## 💡 Why Brand Video Studio?
+## 💡 Why Brand Video Studio? (Repo vs AI Skill)
 
-Commercial video generation SaaS platforms (such as `letsbrag.app`) charge **\$19 per video**, queue your jobs on remote servers, and offer rigid templates.
+### The Problem with AI Agent Prompt Skills (e.g. `/brag`)
+Agent skills (such as `latent-spaces/brag`) are markdown prompt files that instruct an LLM to improvise shell commands and scripts on the fly. While innovative, relying purely on a prompt skill has severe limitations:
+1. **Non-deterministic & Fragile:** LLMs hallucinate shell syntax, miss edge cases, and break when tools change.
+2. **Blind Black Box:** An agent skill runs in the background and dumps an MP4. You cannot scrub through frames, inspect animations, or hear audio in real time before rendering.
+3. **Repo Pollution:** Running ad-hoc video scripts inside your application repository pollutes your git history with gigabytes of raw frames, audio stems, and headless browser caches.
 
-**Brand Video Studio** is a completely free, local, open-source alternative designed for engineers and startup creators:
-
-| Feature | Commercial SaaS (`letsbrag.app`) | Brand Video Studio |
-| :--- | :--- | :--- |
-| **Cost** | **\$19 / video** | **\$0 (100% Free & Open Source)** |
-| **Privacy & Execution** | Cloud queues, remote telemetry | **100% Local on your machine** |
-| **Codebase Coupling** | Often requires vendor scripts | **Zero Coupling** (Separate sovereign studio) |
-| **Visual Customization** | Locked pre-made templates | **Full React 19 + CSS + Spring Physics** |
-| **Interactive Preview** | Pre-rendered static previews | **Real-time Remotion Studio HMR scrubbing** |
-| **Subtitles / Captions** | Coarse or paid add-on | **Word-by-word kinetic captions via whisper.cpp** |
-| **Hardware Footprint** | Cloud-dependent | **Runs on 2-core / 1.2 GB RAM machines** |
+### The Advantage of the Standalone Brand Video Studio Repository
+**Brand Video Studio** is a sovereign, production-grade video studio that runs locally:
+- **Zero Pollution:** Lives in its own repository (`H:\Projects\brand-video-studio`). Your target web apps stay 100% clean and untouched.
+- **Interactive Visual Scrubber (`pnpm dev`):** Open `http://localhost:3000` to scrub through your video frame-by-frame with synchronized live audio, hot-module reload, and visual prop editing.
+- **Strict Hexagonal Architecture & 100% Tested:** Core domain entities and use cases are decoupled from third-party tools via TypeScript Port interfaces, backed by a 16-test unit suite.
+- **Can Still Be Controlled by an Agent Skill:** You can trigger `pnpm studio` from an Antigravity slash command (`/brag`), giving you conversational speed with engine-grade stability.
 
 ---
 
 ## ✨ Key Features
 
-- 🌐 **Automated Live SPA Scraping**: Headless Chrome (Puppeteer) discovers your app, extracts page titles, detects brand colors, and captures crisp 1080p desktop viewports without user intervention.
-- ⚛️ **Declarative Motion Graphics with Remotion**: Build 60fps-smooth motion graphics using standard React 19 components, CSS Grid/Flexbox, and mathematical spring physics (`interpolate`, `spring`).
-- ⚡ **Lightweight Speech Recognition via `whisper.cpp`**: Generates timed word-level caption tokens in <2 seconds using a quantized 77 MB model (`ggml-tiny.en.bin`), bypassing heavy Python/PyTorch dependencies.
-- 🎵 **High-Energy Audio Multiplexing**: Downloads CC-BY soundtracks via `yt-dlp` and uses FFmpeg to multiplex synchronized AAC stereo audio with smooth 2-second outro fade curves.
-- 🖼️ **Settled Frame-0 Poster Baking**: Automatically captures high-resolution settling posters (Frame 555 / 18.5s) and injects FastStart headers into the MP4 container for instant web playback.
-- 🏛️ **Pure Hexagonal Architecture**: Clean separation between Application Core (Use Cases & Entities) and Infrastructure (Puppeteer, Remotion, FFmpeg, Whisper, yt-dlp). Swap any adapter without breaking business logic.
+- 📱 **Dual Aspect Ratios (16:9 Landscape & 9:16 Portrait):** Render high-impact landscape videos for Twitter/X and YouTube, or vertical mobile videos for TikTok, Instagram Reels, and YouTube Shorts.
+- 🤖 **Procedural Animated Characters:** Built-in animated SVG mascots (`coder` and `mascot`) with spring-physics floating, procedural eye blinking, typing arms, and interactive speech moods.
+- 🎨 **Deep Customization via `brand.config.json`:** Customize titles, durations, brand colors, fonts, music, and character mascots without touching code.
+- 🌐 **Automated Live SPA Scraping:** Headless Chrome (Puppeteer) discovers your app, extracts page titles, detects brand colors, and captures crisp 1080p desktop viewports automatically.
+- ⚡ **Lightweight Speech Recognition via `whisper.cpp`:** Generates timed word-level caption tokens in <2 seconds using a quantized 77 MB model (`ggml-tiny.en.bin`), bypassing heavy Python/PyTorch dependencies.
+- 🎵 **Native Soundtrack & Audio Multiplexing:** Built-in CC-BY energetic soundtrack with automated 2-second outro fade curves, plus on-demand download via `yt-dlp`.
+- 🖼️ **Settled Frame-0 Poster Baking:** Automatically captures the optimal outro frame (Frame 555 / 18.5s) and injects it into Frame 0 of `brag.mp4` with FastStart streaming headers.
 
 ---
 
-## 🏛️ Architecture
+## 📱 Multi-Format Support: 16:9 & 9:16
 
-Brand Video Studio follows **Hexagonal Architecture (Ports and Adapters)** to guarantee that client repositories remain 100% clean and decoupled:
+Brand Video Studio natively supports both major video form factors out of the box:
 
-```
-[Target Web Application] (e.g. GoF Design Patterns Masterclass)
-          │  (Scraped via URL, zero repository dependencies)
-          ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                        BRAND VIDEO STUDIO                              │
-│                                                                        │
-│   Driving Adapters       Application Core             Driven Adapters  │
-│   ┌──────────────┐      ┌─────────────────┐          ┌──────────────┐  │
-│   │  Studio CLI  │─────▶│  GenerateBrand  │─────────▶│  Puppeteer   │  │
-│   └──────────────┘      │  VideoUseCase   │          │  (Scraper)   │  │
-│                         └────────┬────────┘          └──────────────┘  │
-│                                  │                   ┌──────────────┐  │
-│                                  ├──────────────────▶│   Remotion   │  │
-│                                  │                   │  (Renderer)  │  │
-│                                  │                   └──────────────┘  │
-│                                  ├──────────────────▶│  whisper.cpp │  │
-│                                  │                   │   (Speech)   │  │
-│                                  │                   └──────────────┘  │
-│                                  ├──────────────────▶│    yt-dlp    │  │
-│                                  │                   │   (Audio)    │  │
-│                                  │                   └──────────────┘  │
-│                                  └──────────────────▶│    FFmpeg    │  │
-│                                                      │ (PostProcess)│  │
-│                                                      └──────────────┘  │
-└──────────────────────────────────┬─────────────────────────────────────┘
-                                   │ produces
-                                   ▼
-          ┌────────────────────────────────────────────────┐
-          │                  DELIVERABLES                  │
-          │  • brag.mp4 (1080p H.264 + AAC 194kbps Audio)  │
-          │  • brag.jpg (Settled High-Res Video Poster)    │
-          │  • share-copy.txt (Viral Launch Social Copy)   │
-          └────────────────────────────────────────────────┘
+| Format | Resolution | Aspect Ratio | Best For | Remotion Composition ID |
+| :--- | :---: | :---: | :--- | :--- |
+| **Landscape** | `1920 × 1080` | `16:9` | Desktop web, YouTube, Twitter/X, LinkedIn | `BrandVideo-Landscape` (or `BrandVideo`) |
+| **Portrait / Vertical** | `1080 × 1920` | `9:16` | TikTok, Instagram Reels, YouTube Shorts, Mobile | `BrandVideo-Portrait` |
+
+### Responsive Layout Engine
+The composition automatically adapts based on aspect ratio:
+* **Landscape:** Dual-column split layout with hook title on the left and interactive simulators / animated mascot on the right.
+* **Portrait:** Vertical mobile-first layout with high-contrast hook on top, centered animated mascot, compact card stacks, and kinetic subtitles docked in the thumb zone.
+
+### Rendering Different Formats via CLI
+```bash
+# Render 16:9 Landscape (Default)
+pnpm studio --url https://your-app.com --format landscape
+
+# Render 9:16 Portrait for Shorts / Reels / TikTok
+pnpm studio --url https://your-app.com --format vertical
 ```
 
-> 📖 **Read the complete design specification:** [Architecture & Technical Specifications](docs/architecture.md)
+---
+
+## 🤖 Animated Characters & Motion Graphics
+
+### Built-in Character Mascots
+The studio includes `<AnimatedCharacter />` (`src/composition/components/AnimatedCharacter.tsx`), a procedural SVG animated mascot with zero external asset dependencies:
+
+1. **`coder` Mascot:**
+   - Droid character with animated typing arms oscillating on laptop keys.
+   - Screen visor reflection displaying color-coded code syntax.
+   - Periodic eye blinking (calculated via modulo frame arithmetic).
+   - Floating breathing bobbing powered by sine wave motion.
+2. **`mascot` Droid:**
+   - Spherical floating robot with energy thruster pulse.
+   - Waving right hand gesturing toward calls-to-action.
+   - Glowing dual-node antenna with spring pulse.
+
+### Enabling or Toggling Characters
+You can select characters via CLI:
+```bash
+# Use coder mascot (default)
+pnpm studio --url https://your-app.com --character coder
+
+# Use friendly waving droid
+pnpm studio --url https://your-app.com --character mascot
+
+# Disable character for a purely minimal UI video
+pnpm studio --url https://your-app.com --character none
+```
+
+---
+
+## 🛠️ Customizing Your Video
+
+You have 3 easy ways to customize your videos:
+
+### Method 1: Configuration File (`brand.config.json`)
+The most powerful way to customize. When you run `pnpm studio`, the engine automatically saves `output/<slug>/brand.config.json`. You can edit this file and re-render instantly:
+
+```bash
+pnpm studio --config brand.config.example.json
+```
+
+#### Example `brand.config.json`:
+```json
+{
+  "projectName": "My Custom SaaS",
+  "url": "https://mysaas.com",
+  "tagline": "AI Workflows in Seconds",
+  "format": "landscape",
+  "tone": "cinematic",
+  "character": {
+    "enabled": true,
+    "type": "coder"
+  },
+  "colors": {
+    "background": "#090d16",
+    "foreground": "#f8fafc",
+    "accent": "#f59e0b",
+    "secondaryAccent": "#06b6d4"
+  },
+  "scenes": [
+    {
+      "id": "scene-1-hook",
+      "type": "hook",
+      "title": "Tired of slow, repetitive data entry?",
+      "durationSeconds": 3.0
+    },
+    {
+      "id": "scene-2-reveal",
+      "type": "reveal",
+      "title": "Meet AutoFlow",
+      "subtitle": "Zero-code automation powered by Next.js",
+      "durationSeconds": 4.0
+    },
+    {
+      "id": "scene-5-outro",
+      "type": "outro",
+      "title": "Start Free Today.",
+      "subtitle": "https://mysaas.com",
+      "durationSeconds": 3.0
+    }
+  ]
+}
+```
+
+### Method 2: Interactive Remotion Studio (`pnpm dev`)
+1. Run `pnpm dev`.
+2. Open `http://localhost:3000` in your browser.
+3. Switch between `BrandVideo-Landscape` and `BrandVideo-Portrait` in the left sidebar.
+4. Scrub frame-by-frame with live audio.
+5. Use the **Props Panel** on the right to edit text, colors, and characters live with instant Hot Module Reloading (HMR).
+
+### Method 3: CLI Flags
+Override any setting directly from the command line:
+```bash
+pnpm studio --url https://example.com --format vertical --character mascot --tone playful
+```
+
+---
+
+## 🎵 Audio Intelligence & Music Tracks
+
+### Do You Need to Manually Download Audio?
+**No.** The studio handles audio automatically:
+1. **Bundled Default Soundtrack:** The studio includes a curated, high-energy CC-BY soundtrack (`public/soundtrack.mp3` & `assets/music/soundtrack.mp3` from `ende.app`). Every video automatically plays this track with a smooth 2-second outro fade.
+2. **Interactive Audio Preview:** Audio is rendered natively by Remotion's `<Audio />` component during preview (`pnpm dev`) and muxed via FFmpeg in final production.
+3. **Voiceover Transcription:** If you place a voiceover recording (`voice.wav`) in the project folder, native C++ `whisper.cpp` (`ggml-tiny.en.bin`) automatically extracts word-by-word timestamps into `captions.json` and renders synchronized kinetic subtitles.
+4. **On-Demand Music Sourcing:** The `YtDlpAdapter` can download any royalty-free audio URL on the fly via `yt-dlp`.
 
 ---
 
@@ -114,8 +205,6 @@ pnpm -v
 ffmpeg -version
 ```
 
-*(See [Developer Setup Guide](docs/developer-setup.md) for Windows, macOS, and Linux setup instructions).*
-
 ### 2. Clone & Install
 ```bash
 git clone https://github.com/your-username/brand-video-studio.git
@@ -124,95 +213,62 @@ pnpm install
 ```
 
 ### 3. Launch Remotion Studio Preview
-Scrub through the video composition in real-time with live audio playback in your browser:
 ```bash
 pnpm dev
 # Opens http://localhost:3000
 ```
 
 ### 4. Generate a Full Video Deliverable
-Run the autonomous end-to-end studio pipeline against any live website:
 ```bash
-pnpm run studio --url https://design-patterns-cyan.vercel.app/ --name "GoF Design Patterns Masterclass"
+# Generate 16:9 Landscape video:
+pnpm studio --url https://design-patterns-cyan.vercel.app/
+
+# Generate 9:16 Portrait Shorts/TikTok video with mascot:
+pnpm studio --url https://design-patterns-cyan.vercel.app/ --format vertical --character mascot
 ```
 
 ---
 
-## 💻 CLI Usage & Workflows
+## 🧪 Testing & Quality Gates
 
-### Interactive Browser Preview (`pnpm dev`)
-Launches the Remotion Web Player with Hot Module Reloading (HMR). You can edit React components in `src/composition/BrandVideoComposition.tsx` and see changes reflect live with zero render latency.
+Run the comprehensive unit test suite:
+```bash
+pnpm run test:unit
+```
+```text
+✔ GenerateBrandVideoUseCase (Hexagonal Orchestration)
+✔ BrandProject Entity
+✔ CaptionTrack Value Object
+✔ Scene Value Object
+✔ Storyboard Value Object
+✔ VideoDeliverable Entity
+ℹ tests 16 | pass 16 | fail 0
+```
 
-### Autonomous Production Render (`pnpm run studio`)
-Executes the full hexagonal pipeline:
-1. Scrapes the target URL for metadata, color palette, and 1080p screenshots.
-2. Ingests or loads background soundtrack.
-3. Transcribes voice/speech tracks into word-level tokens via `whisper.cpp`.
-4. Renders the 600-frame (20s @ 30fps) React motion canvas with `--concurrency 1`.
-5. Post-processes video with FFmpeg (AAC encoding, audio fade curves, poster extraction).
-6. Generates viral social media copy formatted for X (Twitter), LinkedIn, and Reddit.
-
-### Strict Typechecking (`pnpm run typecheck`)
-Verifies full TypeScript 5.7 conformance with zero warnings across all domain entities, value objects, ports, and adapters.
+Verify strict TypeScript compilation:
+```bash
+pnpm run typecheck
+# tsc --noEmit (0 errors)
+```
 
 ---
 
 ## 📦 Output Deliverables
 
-When the pipeline completes, artifacts are cleanly written to `output/<project-slug>/`:
+Deliverables are cleanly written to `output/<project-slug>/`:
 
 ```text
 output/design-patterns/
-├── brag.mp4          # 20.0s 1080p video (H.264 video + AAC stereo audio @ 194kbps)
-├── brag.jpg          # Frame 555 settled thumbnail / poster image (55 KB)
-├── hero-live.png     # Automated 1920x1080 desktop screenshot from Puppeteer
-├── remotion.mp4      # Raw un-muxed video render from Remotion
-└── share-copy.txt    # Ready-to-publish launch copy for X/Twitter & LinkedIn
+├── brag.mp4          # 20.0s 1080p MP4 (Frame 0 poster baked + 192k AAC stereo audio + faststart)
+├── brag.jpg          # High-contrast settled thumbnail for YouTube, X, and LinkedIn
+├── hero-live.png     # Automated 1920x1080 desktop capture from Puppeteer
+├── brand.config.json # Resolved configuration snapshot ready for instant customization
+├── remotion.mp4      # Raw composition render
+└── share-copy.txt    # Platform-ready social launch caption
 ```
-
----
-
-## ⚡ Performance & Low-RAM Engineering
-
-Brand Video Studio is engineered to run reliably on resource-constrained development machines (such as 2-core Intel i3 laptops with under 1.5 GB of free RAM):
-
-- **Single-Worker Concurrency (`--concurrency 1`):** Prevents Chromium instance proliferation, capping peak render memory below 1.1 GB RAM.
-- **Quantized C++ Inference (`whisper.cpp`):** Uses quantized 4-bit `ggml-tiny.en.bin` model, executing word-level transcription in 1.5 seconds using <150 MB RAM (saving >2.5 GB compared to PyTorch).
-- **FastStart Container Flags:** Video outputs include `-movflags +faststart`, enabling instant web streaming before the entire file finishes buffering.
-
----
-
-## 📂 Project Structure
-
-```text
-brand-video-studio/
-├── docs/                           # Comprehensive technical documentation
-│   ├── architecture.md             # Hexagonal architecture & ADRs
-│   └── developer-setup.md          # Setup runbook, native tools & troubleshooting
-├── public/                         # Public static assets & soundtrack
-│   └── soundtrack.mp3              # CC-BY energetic tech soundtrack
-├── src/
-│   ├── domain/                     # Entities & Value Objects (Zero external dependencies)
-│   ├── application/                # Inbound/Outbound Ports & Use Cases
-│   ├── adapters/                   # Driving CLI & Driven infrastructure implementations
-│   ├── composition/                # Remotion 4 React 19 motion graphics canvas
-│   └── container.ts                # Composition Root (Dependency Injection)
-├── tools/                          # Native portable binaries
-│   └── whisper/                    # whisper-cli and quantized GGML models
-├── package.json                    # Workspace scripts & dependencies
-└── tsconfig.json                   # TypeScript configuration
-```
-
----
-
-## 📚 Documentation Index
-
-- **[Architecture Deep Dive](docs/architecture.md)** — Architectural principles, Domain Model, Sequence Diagrams, and Architectural Decision Records (ADRs).
-- **[Developer Setup & Operational Runbook](docs/developer-setup.md)** — Step-by-step setup for Windows, macOS, Linux, Remotion scene tutorials, adapter customization, and troubleshooting.
 
 ---
 
 ## 📄 License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
-

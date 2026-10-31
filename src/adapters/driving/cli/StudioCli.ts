@@ -1,20 +1,70 @@
+import * as fs from 'node:fs/promises';
 import { createStudioContainer } from '../../../container.js';
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const urlArgIndex = args.indexOf('--url');
+  const configArgIndex = args.indexOf('--config');
 
-  if (urlArgIndex === -1 || !args[urlArgIndex + 1]) {
-    console.log('Usage: pnpm studio --url <website-url> [--tone cinematic|polished|yc-parody]');
+  if (urlArgIndex === -1 && configArgIndex === -1) {
+    console.log(`
+Brand Video Studio CLI
+Usage:
+  pnpm studio --url <website-url> [options]
+  pnpm studio --config <path-to-brand.config.json> [options]
+
+Options:
+  --format <landscape|vertical>     Aspect ratio: 16:9 Landscape (default) or 9:16 Portrait for Shorts/Reels/TikTok
+  --character <coder|mascot|none>   Include animated character (default: coder)
+  --tone <cinematic|playful|fast>   Narrative style & music mood (default: cinematic)
+  --concurrency <1-4>               Render worker concurrency (default: 1 for low RAM)
+`);
     process.exit(1);
   }
 
-  const url = args[urlArgIndex + 1];
-  const toneIndex = args.indexOf('--tone');
-  const tone = toneIndex !== -1 ? args[toneIndex + 1] : 'cinematic';
+  let url = '';
+  let tone = 'cinematic';
+  let format: 'landscape' | 'vertical' = 'landscape';
+  let character: 'coder' | 'mascot' | 'none' = 'coder';
 
-  console.log(`[Studio] Launching autonomous brand video generation for: ${url}`);
-  console.log(`[Studio] Tone: ${tone}`);
+  if (configArgIndex !== -1 && args[configArgIndex + 1]) {
+    const configPath = args[configArgIndex + 1];
+    const fileContent = await fs.readFile(configPath, 'utf-8');
+    const parsed = JSON.parse(fileContent);
+    url = parsed.url;
+    tone = parsed.tone || tone;
+    format = parsed.format === 'vertical' ? 'vertical' : 'landscape';
+    if (parsed.character) {
+      character = parsed.character.enabled === false ? 'none' : (parsed.character.type || 'coder');
+    }
+  }
+
+  if (urlArgIndex !== -1 && args[urlArgIndex + 1]) {
+    url = args[urlArgIndex + 1];
+  }
+
+  const toneIndex = args.indexOf('--tone');
+  if (toneIndex !== -1 && args[toneIndex + 1]) {
+    tone = args[toneIndex + 1];
+  }
+
+  const formatIndex = args.indexOf('--format');
+  if (formatIndex !== -1 && args[formatIndex + 1]) {
+    const rawFormat = args[formatIndex + 1].toLowerCase();
+    format = rawFormat === 'vertical' || rawFormat === 'portrait' ? 'vertical' : 'landscape';
+  }
+
+  const charIndex = args.indexOf('--character');
+  if (charIndex !== -1 && args[charIndex + 1]) {
+    const rawChar = args[charIndex + 1].toLowerCase();
+    character = rawChar === 'mascot' ? 'mascot' : rawChar === 'none' ? 'none' : 'coder';
+  }
+
+  console.log(`[Studio] Launching autonomous brand video generation:`);
+  console.log(`  - URL:       ${url}`);
+  console.log(`  - Format:    ${format} (${format === 'vertical' ? '1080x1920 (9:16 Portrait)' : '1920x1080 (16:9 Landscape)'})`);
+  console.log(`  - Character: ${character}`);
+  console.log(`  - Tone:      ${tone}`);
 
   const container = createStudioContainer();
 
@@ -22,14 +72,17 @@ async function main(): Promise<void> {
     const deliverable = await container.generateVideoUseCase.execute({
       url,
       tone,
+      format,
+      character,
       concurrency: 1
     });
 
     console.log(`\n🎉 Success! Deliverables generated:`);
-    console.log(`  - Video: ${deliverable.videoPath}`);
-    console.log(`  - Poster: ${deliverable.posterPath}`);
-    console.log(`  - Share Copy: ${deliverable.shareCopyPath}`);
-    console.log(`\nPreview Copy:\n${deliverable.shareCopyText}\n`);
+    console.log(`  - Video:       ${deliverable.videoPath}`);
+    console.log(`  - Poster:      ${deliverable.posterPath}`);
+    console.log(`  - Share Copy:  ${deliverable.shareCopyPath}`);
+    console.log(`  - Brand Config: output/${deliverable.projectSlug}/brand.config.json`);
+    console.log(`\nPreview Share Copy:\n${deliverable.shareCopyText}\n`);
   } catch (err) {
     console.error('[Studio] Generation failed:', err);
     process.exit(1);
@@ -37,4 +90,3 @@ async function main(): Promise<void> {
 }
 
 main();
-

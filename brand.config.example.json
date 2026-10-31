@@ -1,0 +1,63 @@
+{
+  "$schema": "./brand.config.schema.json",
+  "projectName": "GoF Design Patterns Masterclass",
+  "url": "https://design-patterns-cyan.vercel.app/",
+  "tagline": "Master all 23 Gang of Four patterns with interactive playgrounds",
+  "format": "landscape",
+  "tone": "cinematic",
+  "character": {
+    "enabled": true,
+    "type": "coder"
+  },
+  "colors": {
+    "background": "#090d16",
+    "foreground": "#f8fafc",
+    "accent": "#f59e0b",
+    "secondaryAccent": "#06b6d4",
+    "border": "#1e293b"
+  },
+  "typography": {
+    "display": "Inter, sans-serif",
+    "body": "Inter, sans-serif",
+    "mono": "JetBrains Mono, monospace"
+  },
+  "scenes": [
+    {
+      "id": "scene-1-hook",
+      "type": "hook",
+      "title": "Still writing 800-line God Classes?",
+      "durationSeconds": 3.0,
+      "sfxCue": "boom.wav"
+    },
+    {
+      "id": "scene-2-reveal",
+      "type": "reveal",
+      "title": "GoF Design Patterns Masterclass",
+      "subtitle": "Master all 23 Gang of Four patterns with interactive playgrounds",
+      "durationSeconds": 4.0,
+      "sfxCue": "whoosh.wav"
+    },
+    {
+      "id": "scene-3-highlight",
+      "type": "highlight",
+      "title": "Architectural Decision Engine",
+      "subtitle": "Diagnose code smells with live trade-off analysis",
+      "durationSeconds": 4.5
+    },
+    {
+      "id": "scene-4-feature",
+      "type": "feature",
+      "title": "Monaco Playground & Simulators",
+      "subtitle": "Observe patterns executing in real-time",
+      "durationSeconds": 5.5
+    },
+    {
+      "id": "scene-5-outro",
+      "type": "outro",
+      "title": "Master Architecture. Free & Open Source.",
+      "subtitle": "https://design-patterns-cyan.vercel.app/",
+      "durationSeconds": 3.0,
+      "sfxCue": "chime.wav"
+    }
+  ]
+}

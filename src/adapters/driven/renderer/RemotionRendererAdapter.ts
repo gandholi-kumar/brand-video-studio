@@ -41,7 +41,8 @@ export class RemotionRendererAdapter implements IVideoRendererPort {
     await fs.writeFile(propsFilePath, JSON.stringify(propsPayload, null, 2), 'utf-8');
 
     // Execute Remotion CLI passing the resilient props file
-    const cmd = `pnpm remotion render src/composition/index.ts BrandVideo "${config.outputFilePath}" --props="${propsFilePath}" --concurrency=${config.concurrency} --quality=${config.quality === 'draft' ? 50 : 80}`;
+    const compositionId = config.compositionId || 'BrandVideo';
+    const cmd = `pnpm remotion render src/composition/index.ts ${compositionId} "${config.outputFilePath}" --props="${propsFilePath}" --concurrency=${config.concurrency} --quality=${config.quality === 'draft' ? 50 : 80}`;
 
     await execAsync(cmd);
 
