@@ -1,3 +1,4 @@
+import * as path from 'node:path';
 import { IGenerateBrandVideo, GenerateBrandVideoCommand } from '../ports/inbound/IGenerateBrandVideo.js';
 import { IWebScraperPort } from '../ports/outbound/IWebScraperPort.js';
 import { IAudioIntelligencePort } from '../ports/outbound/IAudioIntelligencePort.js';
@@ -44,11 +45,12 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
     const projectDir = await this.deps.storage.ensureProjectDirectory(project.slug);
 
     // 3. Construct 20s Storyboard
+    const isGofApp = targetUrl.includes('design-patterns') || project.name.toLowerCase().includes('design pattern');
     const storyboard = new Storyboard([
       new Scene({
         id: 'scene-1-hook',
         type: 'hook',
-        title: 'Still writing 800-line God Classes?',
+        title: isGofApp ? 'Still writing 800-line God Classes?' : 'Tired of slow, bloated software?',
         durationSeconds: 3.0,
         sfxCue: 'boom.wav'
       }),
@@ -63,21 +65,21 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
       new Scene({
         id: 'scene-3-highlight',
         type: 'highlight',
-        title: 'Architectural Decision Engine',
-        subtitle: 'Diagnose code smells with live trade-off analysis',
+        title: isGofApp ? 'Architectural Decision Engine' : 'Engineered for Performance',
+        subtitle: isGofApp ? 'Diagnose code smells with live trade-off analysis' : 'Fast, intuitive, and modern UX out of the box',
         durationSeconds: 4.5
       }),
       new Scene({
         id: 'scene-4-feature',
         type: 'feature',
-        title: 'Monaco Playground & Simulators',
-        subtitle: 'Observe patterns executing in real-time',
+        title: isGofApp ? 'Monaco Playground & Simulators' : 'Live Interactive Capabilities',
+        subtitle: isGofApp ? 'Observe patterns executing in real-time' : 'Seamless workflows designed for developers',
         durationSeconds: 5.5
       }),
       new Scene({
         id: 'scene-5-outro',
         type: 'outro',
-        title: 'Master Architecture. Free & Open Source.',
+        title: isGofApp ? 'Master Architecture. Free & Open Source.' : `${project.name} is Live.`,
         subtitle: project.url,
         durationSeconds: 3.0,
         sfxCue: 'chime.wav'
@@ -106,13 +108,15 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
     // 6. Post-Processing: Extract settled frame, mux audio, and bake frame 0
     const posterPath = `${projectDir}/brag.jpg`;
     const finalVideoPath = `${projectDir}/brag.mp4`;
-    const audioTrackPath = './assets/music/soundtrack.mp3';
+    const audioTrackPath = path.resolve('assets/music/soundtrack.mp3');
 
     await this.deps.postProcessor.extractPosterFrame(rawVideoPath, 18.5, posterPath);
     await this.deps.postProcessor.bakePosterAndMuxAudio(rawVideoPath, posterPath, audioTrackPath, finalVideoPath);
 
     // 7. Generate Platform-Ready Share Copy
-    const shareCopyText = `Stop reading 30-year-old textbooks to learn software architecture.\n\nWe built ${project.name}: an interactive, visual playground covering all 23 Gang of Four patterns with live Monaco execution, architectural decision trees, and visual simulators.\n\nExplore it live (free & open source): ${project.url}`;
+    const shareCopyText = isGofApp
+      ? `Stop reading 30-year-old textbooks to learn software architecture.\n\nWe built ${project.name}: an interactive, visual playground covering all 23 Gang of Four patterns with live Monaco execution, architectural decision trees, and visual simulators.\n\nExplore it live (free & open source): ${project.url}`
+      : `${project.name} is officially live.\n\n${project.tagline || 'Experience modern software built for fast execution and high productivity.'}\n\nCheck it out: ${project.url}`;
     const shareCopyPath = await this.deps.storage.saveTextFile(project.slug, 'share-copy.txt', shareCopyText);
 
     return new VideoDeliverable(

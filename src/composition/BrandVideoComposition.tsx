@@ -11,10 +11,18 @@ import {
 } from 'remotion';
 import { KineticCaptions, WordToken } from './components/KineticCaptions';
 
+export interface SerializedScene {
+  id: string;
+  type: string;
+  title: string;
+  subtitle?: string;
+}
+
 export interface BrandVideoProps {
   [key: string]: unknown;
   projectName: string;
   tagline: string;
+  projectUrl?: string;
   colors?: {
     background: string;
     foreground: string;
@@ -22,21 +30,30 @@ export interface BrandVideoProps {
     secondaryAccent?: string;
   };
   captions?: WordToken[];
+  scenes?: SerializedScene[];
 }
 
 export const BrandVideoComposition: React.FC<BrandVideoProps> = ({
   projectName = 'GoF Design Patterns Masterclass',
   tagline = 'Master all 23 Gang of Four patterns with interactive playgrounds',
+  projectUrl,
   colors = {
     background: '#090d16',
     foreground: '#f8fafc',
     accent: '#f59e0b',
     secondaryAccent: '#06b6d4'
   },
-  captions = []
+  captions = [],
+  scenes = []
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const hookScene = scenes.find((s) => s.type === 'hook');
+  const hookTitle = hookScene?.title || 'Still writing 800-line God Classes?';
+  const cleanUrl = projectUrl
+    ? projectUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
+    : 'design-patterns-cyan.vercel.app';
 
   // Scene 1: Hook (Frames 0 - 90 / 0.0s - 3.0s)
   const hookSpring = spring({ frame, fps, config: { damping: 14 } });
@@ -121,7 +138,13 @@ export const BrandVideoComposition: React.FC<BrandVideoProps> = ({
               margin: 0
             }}
           >
-            Still writing <span style={{ color: '#ef4444' }}>800-line God Classes</span>?
+            {hookTitle === 'Still writing 800-line God Classes?' ? (
+              <>
+                Still writing <span style={{ color: '#ef4444' }}>800-line God Classes</span>?
+              </>
+            ) : (
+              hookTitle
+            )}
           </h1>
         </AbsoluteFill>
       </Sequence>
@@ -324,7 +347,7 @@ export const BrandVideoComposition: React.FC<BrandVideoProps> = ({
               letterSpacing: '-0.01em'
             }}
           >
-            design-patterns-cyan.vercel.app
+            {cleanUrl}
           </div>
         </AbsoluteFill>
       </Sequence>

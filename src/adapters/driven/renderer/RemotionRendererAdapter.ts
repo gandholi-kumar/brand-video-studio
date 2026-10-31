@@ -1,5 +1,7 @@
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
+import * as path from 'node:path';
+import * as fs from 'node:fs/promises';
 import { IVideoRendererPort, RenderConfig, RenderResult } from '../../../application/ports/outbound/IVideoRendererPort.js';
 import { BrandProject } from '../../../domain/entities/BrandProject.js';
 import { Storyboard } from '../../../domain/value-objects/Storyboard.js';
@@ -16,17 +18,30 @@ export class RemotionRendererAdapter implements IVideoRendererPort {
     captions: CaptionTrack | null,
     config: RenderConfig
   ): Promise<RenderResult> {
-    const propsJson = JSON.stringify({
+    const propsDir = path.dirname(path.resolve(config.outputFilePath));
+    await fs.mkdir(propsDir, { recursive: true });
+    const propsFilePath = path.join(propsDir, 'render-props.json');
+
+    const propsPayload = {
       projectName: project.name,
+      projectUrl: project.url,
       tagline: project.tagline,
       colors: project.colors,
       typography: project.typography,
       totalDuration: storyboard.getTotalDurationSeconds(),
-      captions: captions ? captions.words : []
-    }).replace(/"/g, '\\"');
+      captions: captions ? captions.words : [],
+      scenes: storyboard.scenes.map((s) => ({
+        id: s.id,
+        type: s.type,
+        title: s.title,
+        subtitle: s.subtitle
+      }))
+    };
 
-    // Execute Remotion CLI with strict single-worker concurrency for low-RAM safety
-    const cmd = `pnpm remotion render src/composition/Root.tsx BrandVideo "${config.outputFilePath}" --props="${propsJson}" --concurrency=${config.concurrency} --quality=${config.quality === 'draft' ? 50 : 80}`;
+    await fs.writeFile(propsFilePath, JSON.stringify(propsPayload, null, 2), 'utf-8');
+
+    // Execute Remotion CLI passing the resilient props file
+    const cmd = `pnpm remotion render src/composition/index.ts BrandVideo "${config.outputFilePath}" --props="${propsFilePath}" --concurrency=${config.concurrency} --quality=${config.quality === 'draft' ? 50 : 80}`;
 
     await execAsync(cmd);
 
