@@ -100,7 +100,8 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
     const height = isVertical ? 1920 : 1080;
     const compositionId = isVertical ? 'BrandVideo-Portrait' : 'BrandVideo-Landscape';
 
-    const rawVideoPath = `${projectDir}/raw-render.mp4`;
+    // Route intermediate raw render to internal .work/ directory
+    const rawVideoPath = `${projectDir}/.work/raw-render.mp4`;
     await this.deps.videoRenderer.render(project, storyboard, captions, {
       fps: 30,
       width,
@@ -108,7 +109,11 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
       concurrency,
       quality: 'delivery',
       outputFilePath: rawVideoPath,
-      compositionId
+      compositionId,
+      character: {
+        enabled: command.character !== 'none',
+        type: command.character === 'mascot' ? 'mascot' : 'coder'
+      }
     });
 
     // 6. Post-Processing: Extract settled frame, mux audio, and bake frame 0
@@ -140,24 +145,26 @@ export class GenerateBrandVideoUseCase implements IGenerateBrandVideo {
         durationSeconds: s.durationSeconds
       }))
     };
-    await this.deps.storage.saveTextFile(project.slug, 'brand.config.json', JSON.stringify(configSnapshot, null, 2));
+    await this.deps.storage.saveTextFile(projectDir, 'brand.config.json', JSON.stringify(configSnapshot, null, 2));
 
-    // 7. Generate Platform-Ready Share Copy
+    // 8. Generate Platform-Ready Share Copy
     const shareCopyText = isGofApp
       ? `Stop reading 30-year-old textbooks to learn software architecture.\n\nWe built ${project.name}: an interactive, visual playground covering all 23 Gang of Four patterns with live Monaco execution, architectural decision trees, and visual simulators.\n\nExplore it live (free & open source): ${project.url}`
       : `${project.name} is officially live.\n\n${project.tagline || 'Experience modern software built for fast execution and high productivity.'}\n\nCheck it out: ${project.url}`;
-    const shareCopyPath = await this.deps.storage.saveTextFile(project.slug, 'share-copy.txt', shareCopyText);
+    const shareCopyPath = await this.deps.storage.saveTextFile(projectDir, 'share-copy.txt', shareCopyText);
+
+    const deliverableSlug = path.basename(projectDir);
 
     return new VideoDeliverable(
-      project.slug,
+      deliverableSlug,
       finalVideoPath,
       posterPath,
       shareCopyPath,
       shareCopyText,
       {
         durationSeconds: storyboard.getTotalDurationSeconds(),
-        width: 1920,
-        height: 1080,
+        width,
+        height,
         fps: 30,
         hasPosterFrame0: true,
         generatedAt: new Date()

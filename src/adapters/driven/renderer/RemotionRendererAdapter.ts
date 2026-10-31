@@ -28,6 +28,7 @@ export class RemotionRendererAdapter implements IVideoRendererPort {
       tagline: project.tagline,
       colors: project.colors,
       typography: project.typography,
+      character: config.character,
       totalDuration: storyboard.getTotalDurationSeconds(),
       captions: captions ? captions.words : [],
       scenes: storyboard.scenes.map((s) => ({

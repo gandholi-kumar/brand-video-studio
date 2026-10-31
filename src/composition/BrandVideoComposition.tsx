@@ -11,6 +11,12 @@ import {
 } from 'remotion';
 import { KineticCaptions, WordToken } from './components/KineticCaptions';
 import { AnimatedCharacter, CharacterType } from './components/AnimatedCharacter';
+import { CinematicCamera } from './components/CinematicCamera';
+import { PerspectiveCard } from './components/PerspectiveCard';
+import { BackgroundAtmosphere } from './components/BackgroundAtmosphere';
+import { MessyCodeStream } from './components/MessyCodeStream';
+import { LivingNodeSimulator } from './components/LivingNodeSimulator';
+import { LiveCodeTyping } from './components/LiveCodeTyping';
 
 export interface SerializedScene {
   id: string;
@@ -68,30 +74,27 @@ export const BrandVideoComposition: React.FC<BrandVideoProps> = ({
     ? projectUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
     : 'design-patterns-cyan.vercel.app';
 
+  // Scene Transitions (Staggered overlaps with spring eases)
   // Scene 1: Hook (Frames 0 - 90 / 0.0s - 3.0s)
   const hookSpring = spring({ frame, fps, config: { damping: 14 } });
-  const hookScale = interpolate(hookSpring, [0, 1], [0.8, 1]);
+  const hookScale = interpolate(hookSpring, [0, 1], [0.85, 1]);
   const hookOpacity = interpolate(frame, [0, 15, 75, 90], [0, 1, 1, 0]);
 
   // Scene 2: Reveal (Frames 90 - 210 / 3.0s - 7.0s)
   const revealFrame = frame - 90;
-  const revealSpring = spring({ frame: revealFrame, fps, config: { damping: 15 } });
+  const revealSpring = spring({ frame: revealFrame, fps, config: { damping: 14 } });
   const revealScale = interpolate(revealSpring, [0, 1], [0.9, 1]);
   const revealOpacity = interpolate(revealFrame, [0, 20, 100, 120], [0, 1, 1, 0]);
 
-  // Scene 3: Decision Engine (Frames 210 - 360 / 7.0s - 12.0s)
+  // Scene 3: Living Simulator (Frames 210 - 360 / 7.0s - 12.0s)
   const deFrame = frame - 210;
-  const deSpring = spring({ frame: deFrame, fps, config: { damping: 16 } });
-  const deScale = interpolate(deSpring, [0, 1], [0.92, 1]);
   const deOpacity = interpolate(deFrame, [0, 20, 130, 150], [0, 1, 1, 0]);
 
-  // Scene 4: Monaco Playground & Simulators (Frames 360 - 510 / 12.0s - 17.0s)
+  // Scene 4: Monaco Runner (Frames 360 - 510 / 12.0s - 17.0s)
   const monoFrame = frame - 360;
-  const monoSpring = spring({ frame: monoFrame, fps, config: { damping: 16 } });
-  const monoScale = interpolate(monoSpring, [0, 1], [0.95, 1]);
   const monoOpacity = interpolate(monoFrame, [0, 20, 130, 150], [0, 1, 1, 0]);
 
-  // Scene 5: Outro & Call to Action (Frames 510 - 600 / 17.0s - 20.0s)
+  // Scene 5: Outro (Frames 510 - 600 / 17.0s - 20.0s)
   const outroFrame = frame - 510;
   const outroSpring = spring({ frame: outroFrame, fps, config: { damping: 14 } });
   const outroScale = interpolate(outroSpring, [0, 1], [0.95, 1]);
@@ -102,300 +105,402 @@ export const BrandVideoComposition: React.FC<BrandVideoProps> = ({
       style={{
         backgroundColor: colors.background,
         color: colors.foreground,
-        fontFamily: 'Inter, system-ui, sans-serif'
+        fontFamily: 'Inter, system-ui, sans-serif',
+        overflow: 'hidden'
       }}
     >
-      {/* Background Subtle Gradient Grid */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `radial-gradient(circle at 50% 50%, ${colors.accent}15 0%, transparent 75%)`
-        }}
+      {/* Dynamic Cinematic Background Atmosphere */}
+      <BackgroundAtmosphere
+        primaryAccent={colors.accent}
+        secondaryAccent={colors.secondaryAccent || '#06b6d4'}
+        backgroundColor={colors.background}
       />
 
-      {/* SCENE 1: THE HOOK */}
+      {/* ============================================================ */}
+      {/* SCENE 1: THE FRUSTRATION (CHAOTIC CODE STREAM & REALITY CHECK) */}
+      {/* ============================================================ */}
       <Sequence from={0} durationInFrames={90}>
-        <AbsoluteFill
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            opacity: hookOpacity,
-            transform: `scale(${hookScale})`,
-            padding: isPortrait ? '0 40px' : '0 80px'
-          }}
-        >
-          {character?.enabled && (
-            <div style={{ marginBottom: isPortrait ? 10 : 20 }}>
-              <AnimatedCharacter
-                type={character.type || 'coder'}
-                accentColor={colors.accent}
-                size={isPortrait ? 240 : 200}
-              />
-            </div>
-          )}
-          <div
-            style={{
-              padding: isPortrait ? '8px 20px' : '12px 28px',
-              borderRadius: 30,
-              backgroundColor: `${colors.accent}22`,
-              border: `1px solid ${colors.accent}`,
-              color: colors.accent,
-              fontSize: isPortrait ? 20 : 24,
-              fontWeight: 700,
-              marginBottom: 24,
-              letterSpacing: '0.05em'
-            }}
-          >
-            ARCHITECTURE REALITY CHECK
-          </div>
-          <h1
-            style={{
-              fontSize: isPortrait ? 60 : 76,
-              fontWeight: 900,
-              textAlign: 'center',
-              maxWidth: isPortrait ? 900 : 1200,
-              lineHeight: 1.15,
-              margin: 0
-            }}
-          >
-            {hookTitle === 'Still writing 800-line God Classes?' ? (
-              <>
-                Still writing <span style={{ color: '#ef4444' }}>800-line God Classes</span>?
-              </>
-            ) : (
-              hookTitle
-            )}
-          </h1>
-        </AbsoluteFill>
-      </Sequence>
-
-      {/* SCENE 2: THE REVEAL */}
-      <Sequence from={90} durationInFrames={120}>
-        <AbsoluteFill
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            opacity: revealOpacity,
-            transform: `scale(${revealScale})`,
-            padding: isPortrait ? '0 40px' : '0 60px'
-          }}
-        >
-          <div
+        <CinematicCamera durationInFrames={90} startScale={1.0} endScale={1.08}>
+          <AbsoluteFill
             style={{
               display: 'flex',
-              gap: 16,
-              marginBottom: 24
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: hookOpacity,
+              transform: `scale(${hookScale})`,
+              padding: isPortrait ? '0 30px' : '0 80px'
             }}
           >
-            <span style={{ backgroundColor: '#10b98122', border: '1px solid #10b981', color: '#10b981', padding: '6px 16px', borderRadius: 20, fontSize: isPortrait ? 16 : 18, fontWeight: 700 }}>
-              Creational
-            </span>
-            <span style={{ backgroundColor: '#6366f122', border: '1px solid #6366f1', color: '#6366f1', padding: '6px 16px', borderRadius: 20, fontSize: isPortrait ? 16 : 18, fontWeight: 700 }}>
-              Structural
-            </span>
-            <span style={{ backgroundColor: `${colors.accent}22`, border: `1px solid ${colors.accent}`, color: colors.accent, padding: '6px 16px', borderRadius: 20, fontSize: isPortrait ? 16 : 18, fontWeight: 700 }}>
-              Behavioral
-            </span>
-          </div>
-          <h1
-            style={{
-              fontSize: isPortrait ? 68 : 82,
-              fontWeight: 900,
-              textAlign: 'center',
-              margin: 0,
-              color: '#ffffff',
-              letterSpacing: '-0.03em'
-            }}
-          >
-            {projectName}
-          </h1>
-          <p
-            style={{
-              fontSize: isPortrait ? 26 : 32,
-              color: '#94a3b8',
-              maxWidth: isPortrait ? 840 : 900,
-              textAlign: 'center',
-              marginTop: 20
-            }}
-          >
-            {tagline}
-          </p>
-        </AbsoluteFill>
+            {/* Flashing Alert Badge */}
+            <div
+              style={{
+                padding: isPortrait ? '8px 20px' : '10px 24px',
+                borderRadius: 30,
+                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                border: '1.5px solid #ef4444',
+                color: '#f87171',
+                fontSize: isPortrait ? 18 : 22,
+                fontWeight: 800,
+                marginBottom: 20,
+                letterSpacing: '0.08em',
+                boxShadow: '0 0 30px rgba(239, 68, 68, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8
+              }}
+            >
+              <span>🚨</span> ARCHITECTURE REALITY CHECK
+            </div>
+
+            {/* Hook Headline */}
+            <h1
+              style={{
+                fontSize: isPortrait ? 52 : 72,
+                fontWeight: 900,
+                textAlign: 'center',
+                maxWidth: isPortrait ? 920 : 1200,
+                lineHeight: 1.15,
+                margin: '0 0 24px 0',
+                letterSpacing: '-0.02em',
+                textShadow: '0 4px 20px rgba(0,0,0,0.8)'
+              }}
+            >
+              {hookTitle === 'Still writing 800-line God Classes?' ? (
+                <>
+                  Still writing <span style={{ color: '#ef4444' }}>800-line God Classes</span>?
+                </>
+              ) : (
+                hookTitle
+              )}
+            </h1>
+
+            {/* Chaotic Scrolling Code Stream */}
+            <PerspectiveCard
+              width={isPortrait ? 820 : 960}
+              rotateX={10}
+              rotateY={-5}
+              rotateZ={1}
+              accentColor="#ef4444"
+            >
+              <MessyCodeStream isPortrait={isPortrait} accentColor="#ef4444" />
+            </PerspectiveCard>
+          </AbsoluteFill>
+        </CinematicCamera>
       </Sequence>
 
-      {/* SCENE 3: ARCHITECTURAL DECISION ENGINE */}
+      {/* ============================================================ */}
+      {/* SCENE 2: THE HERO DROP (3D MOCKUP & PATTERN CATEGORY BURST)  */}
+      {/* ============================================================ */}
+      <Sequence from={90} durationInFrames={120}>
+        <CinematicCamera durationInFrames={120} startScale={1.0} endScale={1.06}>
+          <AbsoluteFill
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: revealOpacity,
+              transform: `scale(${revealScale})`,
+              padding: isPortrait ? '0 30px' : '0 60px'
+            }}
+          >
+            {/* Category Badges with Staggered Entrance */}
+            <div
+              style={{
+                display: 'flex',
+                gap: isPortrait ? 12 : 20,
+                marginBottom: 24
+              }}
+            >
+              <span
+                style={{
+                  backgroundColor: 'rgba(16, 185, 129, 0.18)',
+                  border: '1.5px solid #10b981',
+                  color: '#34d399',
+                  padding: isPortrait ? '6px 16px' : '8px 22px',
+                  borderRadius: 24,
+                  fontSize: isPortrait ? 16 : 20,
+                  fontWeight: 800,
+                  boxShadow: '0 0 25px rgba(16, 185, 129, 0.3)'
+                }}
+              >
+                Creational (5)
+              </span>
+              <span
+                style={{
+                  backgroundColor: 'rgba(99, 102, 241, 0.18)',
+                  border: '1.5px solid #6366f1',
+                  color: '#818cf8',
+                  padding: isPortrait ? '6px 16px' : '8px 22px',
+                  borderRadius: 24,
+                  fontSize: isPortrait ? 16 : 20,
+                  fontWeight: 800,
+                  boxShadow: '0 0 25px rgba(99, 102, 241, 0.3)'
+                }}
+              >
+                Structural (7)
+              </span>
+              <span
+                style={{
+                  backgroundColor: `${colors.accent}22`,
+                  border: `1.5px solid ${colors.accent}`,
+                  color: colors.accent,
+                  padding: isPortrait ? '6px 16px' : '8px 22px',
+                  borderRadius: 24,
+                  fontSize: isPortrait ? 16 : 20,
+                  fontWeight: 800,
+                  boxShadow: `0 0 25px ${colors.accent}44`
+                }}
+              >
+                Behavioral (11)
+              </span>
+            </div>
+
+            {/* Hero Project Title */}
+            <h1
+              style={{
+                fontSize: isPortrait ? 64 : 86,
+                fontWeight: 900,
+                textAlign: 'center',
+                margin: 0,
+                color: '#ffffff',
+                letterSpacing: '-0.03em',
+                textShadow: `0 0 40px ${colors.accent}55`
+              }}
+            >
+              {projectName}
+            </h1>
+
+            <p
+              style={{
+                fontSize: isPortrait ? 24 : 32,
+                color: '#94a3b8',
+                maxWidth: isPortrait ? 840 : 1000,
+                textAlign: 'center',
+                marginTop: 16,
+                lineHeight: 1.3
+              }}
+            >
+              {tagline}
+            </p>
+
+            {/* Mascot Greeting */}
+            {character?.enabled && (
+              <div style={{ marginTop: 20 }}>
+                <AnimatedCharacter
+                  type={character.type || 'coder'}
+                  accentColor={colors.accent}
+                  size={isPortrait ? 220 : 200}
+                />
+              </div>
+            )}
+          </AbsoluteFill>
+        </CinematicCamera>
+      </Sequence>
+
+      {/* ============================================================ */}
+      {/* SCENE 3: LIVING ARCHITECTURE (EVENT BUS SIMULATOR & RADAR)   */}
+      {/* ============================================================ */}
       <Sequence from={210} durationInFrames={150}>
-        <AbsoluteFill
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            opacity: deOpacity,
-            transform: `scale(${deScale})`,
-            padding: isPortrait ? '0 30px' : '0'
-          }}
-        >
-          <div
+        <CinematicCamera durationInFrames={150} startScale={1.0} endScale={1.07}>
+          <AbsoluteFill
             style={{
-              width: isPortrait ? 920 : 1100,
-              backgroundColor: '#111726',
-              border: `2px solid ${colors.secondaryAccent || '#06b6d4'}`,
-              borderRadius: 24,
-              padding: isPortrait ? 32 : 48,
-              boxShadow: `0 0 50px ${colors.secondaryAccent || '#06b6d4'}33`
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: deOpacity,
+              padding: isPortrait ? '0 20px' : '0 40px'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <span style={{ color: colors.secondaryAccent || '#06b6d4', fontWeight: 800, fontSize: isPortrait ? 20 : 24 }}>
-                ⚡ Architectural Decision Engine
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+              <span
+                style={{
+                  color: colors.secondaryAccent || '#06b6d4',
+                  fontWeight: 800,
+                  fontSize: isPortrait ? 18 : 22,
+                  letterSpacing: '0.06em'
+                }}
+              >
+                INTERACTIVE ARCHITECTURAL DECISION ENGINE
               </span>
-              <span style={{ backgroundColor: '#1e293b', padding: '6px 14px', borderRadius: 12, color: '#94a3b8', fontSize: 14 }}>
-                Diagnosis Mode
-              </span>
+              <h2
+                style={{
+                  fontSize: isPortrait ? 32 : 46,
+                  fontWeight: 900,
+                  margin: '8px 0 0 0',
+                  color: '#ffffff'
+                }}
+              >
+                Simulate Before You Refactor
+              </h2>
             </div>
-            <h2 style={{ fontSize: isPortrait ? 34 : 44, fontWeight: 800, margin: '0 0 16px 0', lineHeight: 1.2 }}>
-              &quot;Need to swap algorithms at runtime without modifying client code?&quot;
-            </h2>
-            <div style={{ display: 'flex', flexDirection: isPortrait ? 'column' : 'row', gap: 16, marginTop: isPortrait ? 20 : 28 }}>
-              <div style={{ flex: 1, backgroundColor: '#1e293b', border: `2px solid ${colors.accent}`, borderRadius: 16, padding: 18 }}>
-                <div style={{ color: colors.accent, fontWeight: 800, fontSize: 18 }}>RECOMMENDED PATTERN</div>
-                <div style={{ color: '#ffffff', fontSize: isPortrait ? 26 : 32, fontWeight: 900, marginTop: 6 }}>Strategy Pattern</div>
-                <div style={{ color: '#94a3b8', fontSize: 15, marginTop: 4 }}>Eliminates tight coupling · Open/Closed</div>
-              </div>
-              <div style={{ flex: 1, backgroundColor: '#0f172a', borderRadius: 16, padding: 18, border: '1px solid #334155' }}>
-                <div style={{ color: '#64748b', fontWeight: 800, fontSize: 18 }}>TRADE-OFF IMPACT</div>
-                <div style={{ color: '#10b981', fontSize: isPortrait ? 26 : 32, fontWeight: 900, marginTop: 6 }}>High Modularity</div>
-                <div style={{ color: '#94a3b8', fontSize: 15, marginTop: 4 }}>+100% Extensibility · Clean Isolation</div>
-              </div>
-            </div>
-          </div>
-        </AbsoluteFill>
+
+            <PerspectiveCard
+              width={isPortrait ? 940 : 1150}
+              rotateX={8}
+              rotateY={-5}
+              rotateZ={1}
+              accentColor={colors.secondaryAccent || '#06b6d4'}
+            >
+              <LivingNodeSimulator
+                primaryAccent={colors.accent}
+                secondaryAccent={colors.secondaryAccent || '#06b6d4'}
+                isPortrait={isPortrait}
+              />
+            </PerspectiveCard>
+          </AbsoluteFill>
+        </CinematicCamera>
       </Sequence>
 
-      {/* SCENE 4: MONACO PLAYGROUND & SIMULATORS */}
+      {/* ============================================================ */}
+      {/* SCENE 4: REAL-TIME MONACO CODE RUNNER & TELEMETRY STREAM     */}
+      {/* ============================================================ */}
       <Sequence from={360} durationInFrames={150}>
-        <AbsoluteFill
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            opacity: monoOpacity,
-            transform: `scale(${monoScale})`,
-            padding: isPortrait ? '0 20px' : '0'
-          }}
-        >
-          <div
+        <CinematicCamera durationInFrames={150} startScale={1.0} endScale={1.07}>
+          <AbsoluteFill
             style={{
-              width: isPortrait ? 940 : 1200,
-              backgroundColor: '#0d1117',
-              border: '2px solid #30363d',
-              borderRadius: 20,
-              overflow: 'hidden',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.6)'
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: monoOpacity,
+              padding: isPortrait ? '0 20px' : '0 40px'
             }}
           >
-            <div style={{ backgroundColor: '#161b22', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#ff5f56' }} />
-              <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#ffbd2e' }} />
-              <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#27c93f' }} />
-              <span style={{ marginLeft: 16, color: '#8b949e', fontFamily: 'JetBrains Mono, monospace', fontSize: isPortrait ? 13 : 16 }}>
-                observer-pattern.ts — Monaco Interactive Execution
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+              <span
+                style={{
+                  color: colors.accent,
+                  fontWeight: 800,
+                  fontSize: isPortrait ? 18 : 22,
+                  letterSpacing: '0.06em'
+                }}
+              >
+                LIVE MONACO PLAYGROUND & SIMULATORS
               </span>
+              <h2
+                style={{
+                  fontSize: isPortrait ? 32 : 46,
+                  fontWeight: 900,
+                  margin: '8px 0 0 0',
+                  color: '#ffffff'
+                }}
+              >
+                Execute Real TypeScript in the Browser
+              </h2>
             </div>
-            <div style={{ padding: isPortrait ? 24 : 36, fontFamily: 'JetBrains Mono, monospace', fontSize: isPortrait ? 17 : 22, lineHeight: 1.5 }}>
-              <div><span style={{ color: '#ff7b72' }}>interface</span> <span style={{ color: '#79c0ff' }}>Observer</span> {'{'} <span style={{ color: '#d2a8ff' }}>update</span>(state: <span style={{ color: '#79c0ff' }}>State</span>): <span style={{ color: '#ff7b72' }}>void</span>; {'}'}</div>
-              <div><span style={{ color: '#ff7b72' }}>class</span> <span style={{ color: '#79c0ff' }}>Subject</span> {'{'}</div>
-              <div style={{ paddingLeft: 24 }}><span style={{ color: '#ff7b72' }}>private</span> observers: <span style={{ color: '#79c0ff' }}>Observer</span>[] = [];</div>
-              <div style={{ paddingLeft: 24 }}><span style={{ color: '#d2a8ff' }}>notify</span>() {'{'} <span style={{ color: '#ff7b72' }}>this</span>.observers.<span style={{ color: '#d2a8ff' }}>forEach</span>(o =&gt; o.<span style={{ color: '#d2a8ff' }}>update</span>(<span style={{ color: '#ff7b72' }}>this</span>.state)); {'}'}</div>
-              <div>{'}'}</div>
-              <div style={{ marginTop: 20, padding: '12px 18px', backgroundColor: '#1f242c', borderRadius: 10, borderLeft: `4px solid ${colors.accent}`, color: '#a5d6ff', fontSize: isPortrait ? 14 : 16 }}>
-                🚀 [Execution Console] 3 Observers notified · Real-time event dispatched
-              </div>
-            </div>
-          </div>
-        </AbsoluteFill>
+
+            <PerspectiveCard
+              width={isPortrait ? 940 : 1150}
+              rotateX={6}
+              rotateY={-4}
+              rotateZ={1}
+              accentColor={colors.accent}
+            >
+              <LiveCodeTyping accentColor={colors.accent} isPortrait={isPortrait} />
+            </PerspectiveCard>
+          </AbsoluteFill>
+        </CinematicCamera>
       </Sequence>
 
-      {/* SCENE 5: OUTRO & CALL TO ACTION */}
+      {/* ============================================================ */}
+      {/* SCENE 5: CLIMAX & METALLIC SHIMMER CALL TO ACTION            */}
+      {/* ============================================================ */}
       <Sequence from={510} durationInFrames={90}>
-        <AbsoluteFill
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            opacity: outroOpacity,
-            transform: `scale(${outroScale})`,
-            padding: isPortrait ? '0 40px' : '0'
-          }}
-        >
-          {character?.enabled && (
-            <div style={{ marginBottom: isPortrait ? 16 : 24 }}>
-              <AnimatedCharacter
-                type="mascot"
-                accentColor={colors.accent}
-                size={isPortrait ? 260 : 220}
+        <CinematicCamera durationInFrames={90} startScale={1.0} endScale={1.05}>
+          <AbsoluteFill
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: outroOpacity,
+              transform: `scale(${outroScale})`,
+              padding: isPortrait ? '0 30px' : '0'
+            }}
+          >
+            {/* Celebrating Mascot */}
+            {character?.enabled && (
+              <div style={{ marginBottom: 16 }}>
+                <AnimatedCharacter
+                  type="mascot"
+                  accentColor={colors.accent}
+                  size={isPortrait ? 260 : 220}
+                />
+              </div>
+            )}
+
+            <div
+              style={{
+                padding: '8px 22px',
+                borderRadius: 24,
+                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                border: '1.5px solid #10b981',
+                color: '#34d399',
+                fontSize: isPortrait ? 18 : 22,
+                fontWeight: 800,
+                marginBottom: 20,
+                boxShadow: '0 0 30px rgba(16, 185, 129, 0.3)'
+              }}
+            >
+              100% FREE & OPEN SOURCE
+            </div>
+
+            <h1
+              style={{
+                fontSize: isPortrait ? 64 : 88,
+                fontWeight: 900,
+                textAlign: 'center',
+                margin: 0,
+                letterSpacing: '-0.03em',
+                textShadow: '0 4px 30px rgba(0,0,0,0.8)'
+              }}
+            >
+              {projectName}
+            </h1>
+
+            {/* Glowing CTA Pill with Shimmer */}
+            <div
+              style={{
+                position: 'relative',
+                marginTop: 28,
+                padding: isPortrait ? '14px 40px' : '18px 52px',
+                borderRadius: 18,
+                backgroundColor: colors.accent,
+                color: '#090d16',
+                fontSize: isPortrait ? 24 : 32,
+                fontWeight: 900,
+                boxShadow: `0 0 60px ${colors.accent}88, 0 15px 35px rgba(0,0,0,0.5)`,
+                letterSpacing: '-0.01em',
+                overflow: 'hidden'
+              }}
+            >
+              {cleanUrl}
+
+              {/* Sweeping Highlight on Button */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.4) 50%, transparent 80%)',
+                  transform: `translateX(${interpolate(frame % 60, [0, 40], [-100, 200])}%)`
+                }}
               />
             </div>
-          )}
-          <div
-            style={{
-              padding: '8px 20px',
-              borderRadius: 20,
-              backgroundColor: '#10b98122',
-              border: '1px solid #10b981',
-              color: '#10b981',
-              fontSize: isPortrait ? 18 : 22,
-              fontWeight: 800,
-              marginBottom: 20
-            }}
-          >
-            FREE & OPEN SOURCE
-          </div>
-          <h1
-            style={{
-              fontSize: isPortrait ? 68 : 88,
-              fontWeight: 900,
-              textAlign: 'center',
-              margin: 0,
-              letterSpacing: '-0.03em'
-            }}
-          >
-            {projectName}
-          </h1>
-          <div
-            style={{
-              marginTop: 28,
-              padding: isPortrait ? '14px 36px' : '18px 48px',
-              borderRadius: 16,
-              backgroundColor: colors.accent,
-              color: '#090d16',
-              fontSize: isPortrait ? 24 : 32,
-              fontWeight: 900,
-              boxShadow: `0 0 50px ${colors.accent}66`,
-              letterSpacing: '-0.01em'
-            }}
-          >
-            {cleanUrl}
-          </div>
-        </AbsoluteFill>
+          </AbsoluteFill>
+        </CinematicCamera>
       </Sequence>
 
-      {/* KINETIC CAPTIONS OVERLAY (Synchronized with Whisper) */}
+      {/* Kinetic Subtitles synchronized with whisper word timestamps */}
       <KineticCaptions words={captions} accentColor={colors.accent} textColor="#ffffff" />
 
-      {/* BACKGROUND SOUNDTRACK (Native Remotion Audio with 2s outro fade) */}
+      {/* Background Soundtrack with smooth 2s outro fade */}
       <Audio
         src={staticFile('soundtrack.mp3')}
         volume={(f) =>
-          interpolate(f, [540, 600], [0.8, 0], {
+          interpolate(f, [540, 600], [0.85, 0], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp'
           })

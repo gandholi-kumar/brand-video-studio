@@ -2,6 +2,9 @@
 node_modules/
 .pnpm-store/
 
+# Temporary Task Tracker & Work Dirs
+temp/
+
 # Build and Production Outputs
 dist/
 build/

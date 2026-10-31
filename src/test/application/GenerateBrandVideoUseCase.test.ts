@@ -98,8 +98,9 @@ describe('GenerateBrandVideoUseCase (Hexagonal Orchestration)', () => {
       async ensureProjectDirectory(projectSlug: string): Promise<string> {
         return `/mock/output/${projectSlug}`;
       },
-      async saveTextFile(projectSlug: string, relativePath: string, content: string): Promise<string> {
-        const fullPath = `/mock/output/${projectSlug}/${relativePath}`;
+      async saveTextFile(dirOrSlug: string, relativePath: string, content: string): Promise<string> {
+        const base = dirOrSlug.startsWith('/mock/output') ? dirOrSlug : `/mock/output/${dirOrSlug}`;
+        const fullPath = `${base}/${relativePath}`;
         savedFiles.set(fullPath, content);
         return fullPath;
       },

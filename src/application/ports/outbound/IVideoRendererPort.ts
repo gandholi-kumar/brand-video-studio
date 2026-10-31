@@ -10,6 +10,10 @@ export interface RenderConfig {
   quality: 'draft' | 'delivery';
   outputFilePath: string;
   compositionId?: string;
+  character?: {
+    enabled: boolean;
+    type: 'coder' | 'mascot';
+  };
 }
 
 export interface RenderResult {
