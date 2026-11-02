@@ -70,9 +70,14 @@ Options:
 
   const container = createStudioContainer();
 
-  // Mode A: Universal Prompt-Driven Video Generation
-  if (promptArgIndex !== -1 && args[promptArgIndex + 1]) {
-    const prompt = args[promptArgIndex + 1];
+  const isUniversalMode =
+    promptArgIndex !== -1 ||
+    (urlArgIndex !== -1 && (args.includes('--reference') || args.includes('--preview-only') || args.includes('--style')));
+
+  // Unified Mode: Prompt, Reference-Informed, and Scraped Website with Prompt/Reference
+  if (isUniversalMode) {
+    const prompt = promptArgIndex !== -1 ? args[promptArgIndex + 1] : undefined;
+    const url = urlArgIndex !== -1 ? args[urlArgIndex + 1] : undefined;
 
     let format: 'landscape' | 'vertical' = 'landscape';
     const formatIndex = args.indexOf('--format');
@@ -105,6 +110,12 @@ Options:
       referenceInput = args[refIndex + 1];
     }
 
+    let character = 'coder';
+    const charIndex = args.indexOf('--character');
+    if (charIndex !== -1 && args[charIndex + 1]) {
+      character = args[charIndex + 1];
+    }
+
     const previewOnly = args.includes('--preview-only');
 
     let concurrency = 1;
@@ -114,7 +125,8 @@ Options:
     }
 
     console.log(`\n🚀 [Studio v2.0] Autonomous Universal Video Pipeline:`);
-    console.log(`  - Prompt:        "${prompt}"`);
+    if (url) console.log(`  - Scrape URL:    ${url} (Puppeteer live asset & branding extraction)`);
+    if (prompt) console.log(`  - Prompt Focus:  "${prompt}"`);
     console.log(`  - Format:        ${format} (${format === 'vertical' ? '1080x1920 (9:16 Portrait)' : '1920x1080 (16:9 Landscape)'})`);
     console.log(`  - Duration:      ${durationSeconds}s`);
     console.log(`  - Visual Style:  ${style}`);
@@ -125,11 +137,13 @@ Options:
     try {
       const result = await container.generateUniversalVideoUseCase.execute({
         prompt,
+        url,
         referenceInput,
         durationSeconds,
         format,
         topic,
         style,
+        character,
         previewOnly,
         concurrency
       });

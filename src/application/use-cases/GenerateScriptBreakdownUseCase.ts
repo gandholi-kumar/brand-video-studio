@@ -17,13 +17,16 @@ import {
 } from '../../domain/entities/VideoManifest.js';
 import { InspirationProfile } from '../ports/outbound/IReferenceVideoAnalyzerPort.js';
 import { IOpenverseMediaPort } from '../ports/outbound/IOpenverseMediaPort.js';
+import { ScrapedSiteData } from '../ports/outbound/IWebScraperPort.js';
 
 export interface GenerateScriptBreakdownCommand {
-  prompt: string;
+  prompt?: string;
+  scrapedData?: ScrapedSiteData;
   durationSeconds?: number;
   aspectRatio?: AspectRatio;
   topic?: VideoTopic;
   style?: VisualStyle;
+  character?: string;
   inspirationProfile?: InspirationProfile | null;
   outputDirectory?: string;
 }
@@ -52,11 +55,18 @@ export class GenerateScriptBreakdownUseCase {
   }
 
   public async execute(command: GenerateScriptBreakdownCommand): Promise<VideoManifest> {
-    const topic = command.topic || this.detectTopic(command.prompt);
+    const rawPrompt = command.prompt?.trim() || '';
+    const scraped = command.scrapedData;
+
+    const effectivePrompt = rawPrompt || (scraped ? `${scraped.title} - ${scraped.tagline}` : 'Autonomous Launch');
+    const topic = command.topic || this.detectTopic(effectivePrompt);
     const style: VisualStyle = command.style || 'amalgam';
     const aspectRatio: AspectRatio = command.aspectRatio || '16:9';
     const targetDuration = Math.max(15, Math.min(300, command.durationSeconds || 20));
-    const title = this.cleanTitle(command.prompt);
+
+    // Determine title and tagline from scraped site or prompt
+    const title = scraped?.title ? scraped.title : this.cleanTitle(effectivePrompt);
+    const tagline = scraped?.tagline || `What standard approaches fail to acknowledge about ${topic} in 2026`;
     const id = `video-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
 
     // Pacing resolution from Inspiration Profile or Tone standards
@@ -75,12 +85,16 @@ export class GenerateScriptBreakdownUseCase {
     const sceneCount = Math.max(3, Math.round(targetDuration / shotPacingSeconds));
     const baseDuration = Math.round((targetDuration / sceneCount) * 10) / 10;
 
-    // Palette synthesis (Inspiration mood overlay + Topic defaults)
+    // Palette synthesis (Scraped branding takes priority > Inspiration mood > Topic defaults)
     const topicPalette = TOPIC_PALETTES[topic];
     const palette: ColorPaletteTokens = {
       ...topicPalette,
-      accent: command.inspirationProfile?.palette?.accent || topicPalette.accent,
-      secondaryAccent: command.inspirationProfile?.palette?.secondaryAccent || topicPalette.secondaryAccent
+      background: scraped?.colors?.background || topicPalette.background,
+      accent: scraped?.colors?.accent || command.inspirationProfile?.palette?.accent || topicPalette.accent,
+      secondaryAccent:
+        scraped?.colors?.secondaryAccent ||
+        command.inspirationProfile?.palette?.secondaryAccent ||
+        topicPalette.secondaryAccent
     };
 
     // Audio cue assignment
@@ -89,6 +103,10 @@ export class GenerateScriptBreakdownUseCase {
       { second: Math.round(targetDuration * 0.4 * 10) / 10, soundName: 'stat-pop.wav', volume: 0.6 },
       { second: Math.max(0, targetDuration - 2.5), soundName: 'chime.wav', volume: 0.9 }
     ];
+
+    // Character configuration
+    const isCharEnabled = command.character !== 'none';
+    const charType = command.character || 'coder';
 
     // Dynamic scene block allocation
     const scenes: DynamicSceneBlock[] = [];
@@ -105,12 +123,15 @@ export class GenerateScriptBreakdownUseCase {
       const sceneId = `scene-${i + 1}`;
 
       if (isFirst) {
-        // Cold Open / Hook
+        // Cold Open / Hook (informed by prompt focus or scraped problem)
+        const hookTitle = rawPrompt
+          ? `The Breakthrough in ${title}`
+          : `Still Struggling with Legacy ${topic.toUpperCase()}?`;
         scenes.push({
           id: sceneId,
           layoutType: 'headline',
-          title: `The Truth About ${title}`,
-          subtitle: `What standard approaches fail to acknowledge about ${topic} in 2026`,
+          title: hookTitle,
+          subtitle: rawPrompt ? `Addressing: "${rawPrompt}"` : tagline,
           durationSeconds: sceneDuration,
           badgeText: 'HOOK',
           highlightText: title
@@ -144,7 +165,7 @@ export class GenerateScriptBreakdownUseCase {
             id: sceneId,
             layoutType: 'stat-counter',
             title: `Measured Breakthroughs in ${title}`,
-            subtitle: `Empirical benchmarks demonstrating 10x improvement across core metrics`,
+            subtitle: rawPrompt || `Empirical benchmarks demonstrating 10x improvement across core metrics`,
             durationSeconds: sceneDuration,
             badgeText: 'BENCHMARKS',
             highlightText: '10x Faster',
@@ -179,14 +200,14 @@ export class GenerateScriptBreakdownUseCase {
             id: sceneId,
             layoutType: 'rough-diagram',
             title: `Core Architectural Topology`,
-            subtitle: `Decoupled components cooperating across event boundaries`,
+            subtitle: rawPrompt ? `Architectural flow for: ${rawPrompt}` : `Decoupled components cooperating across event boundaries`,
             durationSeconds: sceneDuration,
             badgeText: 'ARCHITECTURE',
             highlightText: 'Decoupled',
             customProps: {
               diagram: {
                 nodes: [
-                  { id: '1', label: 'Input Prompt', x: 200, y: 350 },
+                  { id: '1', label: scraped?.title ? scraped.title : 'Input Source', x: 200, y: 350 },
                   { id: '2', label: 'Amalgam Engine', x: 500, y: 350 },
                   { id: '3', label: '1080p Master', x: 800, y: 350 }
                 ],
@@ -254,7 +275,8 @@ export class GenerateScriptBreakdownUseCase {
         sfxCues
       },
       character: {
-        enabled: false
+        enabled: isCharEnabled,
+        type: charType
       },
       scenes
     };

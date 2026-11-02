@@ -6,17 +6,20 @@ import { VisualStyle } from '../../const/templates.const.js';
 import { IVideoRendererPort } from '../ports/outbound/IVideoRendererPort.js';
 import { IVideoPostProcessorPort } from '../ports/outbound/IVideoPostProcessorPort.js';
 import { IStoragePort } from '../ports/outbound/IStoragePort.js';
+import { IWebScraperPort, ScrapedSiteData } from '../ports/outbound/IWebScraperPort.js';
 import { AnalyzeReferenceVideoUseCase } from './AnalyzeReferenceVideoUseCase.js';
 import { GenerateScriptBreakdownUseCase } from './GenerateScriptBreakdownUseCase.js';
 import { HtmlAnimaticGeneratorAdapter } from '../../adapters/driven/preview/HtmlAnimaticGeneratorAdapter.js';
 
 export interface GenerateUniversalVideoCommand {
-  prompt: string;
+  prompt?: string;
+  url?: string;
   referenceInput?: string;
   durationSeconds?: number;
   format?: 'landscape' | 'vertical';
   topic?: VideoTopic;
   style?: VisualStyle;
+  character?: string;
   previewOnly?: boolean;
   concurrency?: number;
 }
@@ -28,6 +31,7 @@ export interface UniversalVideoDependencies {
   renderer: IVideoRendererPort;
   postProcessor: IVideoPostProcessorPort;
   storage: IStoragePort;
+  webScraper?: IWebScraperPort;
 }
 
 export class GenerateUniversalVideoUseCase {
@@ -43,19 +47,28 @@ export class GenerateUniversalVideoUseCase {
     shareCopyText?: string;
     previewOnly: boolean;
   }> {
-    // 1. Reference Video Analysis (if provided or present in inputs/inspiration)
+    // 1. Live Website / GitHub Scraping (Brag Skill integration)
+    let scrapedData: ScrapedSiteData | undefined;
+    if (command.url && this.deps.webScraper) {
+      const tempDir = './output/temp';
+      scrapedData = await this.deps.webScraper.scrapeUrl(command.url, tempDir);
+    }
+
+    // 2. Reference Video Analysis (if provided or present in inputs/inspiration)
     const inspirationProfile = await this.deps.analyzeReferenceUseCase.execute({
       referenceInput: command.referenceInput
     });
 
-    // 2. Generate Polymorphic Script Breakdown & Manifest
+    // 3. Generate Polymorphic Script Breakdown & Manifest (fuses Prompt + Scraped Assets + Reference Rhythm)
     const aspectRatio: AspectRatio = command.format === 'vertical' ? '9:16' : '16:9';
     const manifest = await this.deps.scriptBreakdownUseCase.execute({
       prompt: command.prompt,
+      scrapedData,
       durationSeconds: command.durationSeconds,
       aspectRatio,
       topic: command.topic,
       style: command.style,
+      character: command.character,
       inspirationProfile
     });
 

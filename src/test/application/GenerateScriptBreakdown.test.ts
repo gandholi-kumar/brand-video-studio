@@ -78,5 +78,49 @@ describe('GenerateScriptBreakdownUseCase', () => {
       );
     }
   });
+
+  it('fuses scraped site branding with user prompt focus and reference video pacing', async () => {
+    const mockScraped = {
+      title: 'DevAgent Pro',
+      tagline: 'Autonomous Pair Programming Agent',
+      colors: {
+        background: '#0a0e17',
+        foreground: '#ffffff',
+        accent: '#10b981'
+      },
+      typography: {
+        display: 'Inter',
+        body: 'Inter',
+        mono: 'JetBrains Mono'
+      },
+      screenshots: [{ name: 'hero', filePath: 'hero-live.png' }]
+    };
+
+    const mockInspiration: InspirationProfile = {
+      sourceFileName: 'dynamic-trailer.mp4',
+      durationSeconds: 20,
+      pacing: {
+        sceneCutCount: 8,
+        averageShotHoldSeconds: 2.5,
+        cutTimestamps: [0, 2.5, 5.0],
+        intensity: 'fast-paced'
+      },
+      palette: { accent: '#10b981' },
+      cadence: { wordsPerMinute: 160, totalSpokenWords: 50, averageWordDurationMs: 375 },
+      analyzedAt: new Date()
+    };
+
+    const manifest = await useCase.execute({
+      prompt: 'Focus on multi-agent collaboration and sub-second tool execution',
+      scrapedData: mockScraped,
+      inspirationProfile: mockInspiration,
+      durationSeconds: 20
+    });
+
+    assert.equal(manifest.data.title, 'DevAgent Pro');
+    assert.equal(manifest.data.theme.palette.accent, '#10b981');
+    assert.ok(manifest.data.scenes.length >= 7); // ~2.5s pacing for 20s
+    assert.ok(manifest.data.scenes[0].title.includes('DevAgent Pro'));
+  });
 });
 

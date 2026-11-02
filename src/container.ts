@@ -56,7 +56,8 @@ export function createStudioContainer(): StudioContainer {
     animaticGenerator,
     renderer,
     postProcessor,
-    storage
+    storage,
+    webScraper: scraper
   });
 
   return {
