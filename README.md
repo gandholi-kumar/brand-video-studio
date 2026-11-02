@@ -3,7 +3,7 @@
 # 🎬 Autonomous Brand Video Studio (v2.0)
 
 **Autonomous, prompt-driven motion graphics engine & programmatic video studio.**  
-*Synthesizes Remotion, FFmpeg, whisper.cpp, yt-dlp, and Hyperframes with the 5-Layer Amalgam Motion Architecture.*
+*Synthesizes Remotion, FFmpeg, whisper.cpp, yt-dlp, and Hyperframes with the 5-Layer Amalgam Motion Architecture and the Brag Launch Skill.*
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19.0-61dafb.svg?logo=react)](https://react.dev/)
@@ -18,7 +18,9 @@
   <a href="#-overview--what-is-v20">Overview</a> •
   <a href="#-key-capabilities">Key Capabilities</a> •
   <a href="#-browser-ui--remotion-studio">Browser UI</a> •
-  <a href="#-universal-prompt-mode">Universal Prompt Mode</a> •
+  <a href="#-two-creative-engines">Two Creative Engines</a> •
+  <a href="#-engine-1-universal-prompt-mode">1. Prompt Mode</a> •
+  <a href="#-engine-2-website--github-repo-scraping-brag-skill">2. Brag Scraping</a> •
   <a href="#-reference-video-inspiration-zero-copy">Reference Inspiration</a> •
   <a href="#-the-5-layer-amalgam-motion-architecture">Amalgam Architecture</a> •
   <a href="#-dual-aspect-ratio-engine">16:9 & 9:16 Formats</a> •
@@ -32,13 +34,12 @@
 
 ## 🌟 Overview: What is v2.0?
 
-**Brand Video Studio v2.0** evolves from a website scraper into a **Universal Autonomous Motion Studio**.
+**Brand Video Studio v2.0** provides two complementary, sovereign video generation engines in a single codebase:
 
-You provide a text prompt on **any topic** (*Technology, Science, History, News, Entertainment, Sports, SaaS*), and the engine:
-1. Deconstructs the concept into narrative beats with active visual progression every second (no frozen scenes).
-2. Optionally analyzes reference videos dropped in `inputs/inspiration/` to extract pacing, cut rhythm, and mood palette—**without copying or reusing any copyrighted video frames or text**.
-3. Outputs an instant, zero-cost **interactive HTML Storyboard Animatic** for immediate review.
-4. Renders cinematic 1080p video in dual aspect ratios (**16:9 Landscape** for laptops/desktops and **9:16 Portrait** for YouTube Shorts, Reels, and TikTok) via Remotion (React 19) and FFmpeg.
+1. **Universal Prompt Engine**: Generate high-production motion videos on **any topic** (*Tech, Science, History, News, Entertainment, Sports, SaaS*) from a detailed text prompt with dynamic duration scaling (15s to 120s+) and progressive anti-freeze animation.
+2. **Brag Launch Skill Engine**: Point to **any live website or GitHub repository URL**, and headless Puppeteer automatically scrapes project metadata, DOM colors, typography, and 1080p hero viewports to synthesize a high-impact 20-second product launch trailer (`brag.mp4`) with procedural animated mascots, Frame-0 poster baking, and social launch copy.
+
+Both engines support **Dual Aspect Ratios** (16:9 Landscape for laptops/monitors and 9:16 Portrait for YouTube Shorts, Reels, and TikTok), reference video rhythm analysis without copyright copying, and zero-cost browser animatics.
 
 ---
 
@@ -46,13 +47,15 @@ You provide a text prompt on **any topic** (*Technology, Science, History, News,
 
 | Capability | Description |
 | :--- | :--- |
-| **Universal Prompt Generation** | Generate motion videos on any topic (*Quantum Computing, Ancient Rome, Premier League, Breaking News*) without altering a single line of React code. |
+| **Website & GitHub Repo Scraping (Brag Skill)** | Puppeteer discovers your app or repo URL, extracts headings, detects brand palettes, captures crisp viewports, and builds a 20s launch trailer. |
+| **Universal Prompt Generation** | Generate motion videos on any concept (*Quantum Computing, Ancient Rome, Premier League, Breaking News*) without hardcoding or altering React code. |
 | **Zero-Copy Reference Inspiration** | Ingest reference MP4s to extract average cut hold times ($\Delta t_{\text{cut}}$) and speech cadence via pure code in 5–10s, synthesizing 100% original scripts. |
 | **Anti-Freeze Dynamic Pacing** | Content unfolds progressively (sub-beat stagger, stat counters, split comparisons, particle drops) so no visual frame sits static for $>2$s. |
 | **Dual Aspect Ratios (16:9 & 9:16)** | Render 1920×1080 (16:9) or 1080×1920 (9:16) with safe-zone thumb clearance and responsive WCAG-compliant typography. |
+| **Procedural Animated Mascots** | Built-in animated SVG characters (`coder` typing on laptop, `mascot` floating droid) with eye blinking, typing arms, and spring physics. |
 | **Zero-Cost Pre-Visualization** | Generates an interactive `storyboard.html` in milliseconds, allowing visual review before launching Chromium rendering. |
-| **Hexagonal Core & Zero Hardcoding** | Dumb-component architecture where all visual parameters are governed by dynamic `VideoManifest` schemas and `src/const/` design tokens. |
-| **Hardened Security** | 100% command-injection free (argument arrays via `execFile`), SSRF intranet protection, and zero system path leaks. |
+| **Frame 0 Poster Baking** | Settled outro frame is automatically extracted and baked into Frame 0 of the MP4 with FastStart headers for instant web playback. |
+| **Hardened Security** | 100% command-injection free (argument arrays via `execFile`), SSRF intranet protection, and zero personal/system path leaks. |
 
 ---
 
@@ -67,7 +70,7 @@ pnpm run dev
 # Opens http://localhost:3000
 ```
 - **Real-Time Playhead**: Scrub frame-by-frame through any scene with live audio and 30/60 fps playback.
-- **Composition Selector**: Switch between `UniversalVideo-Landscape`, `UniversalVideo-Portrait`, and `BrandVideo`.
+- **Composition Selector**: Switch between `UniversalVideo-Landscape`, `UniversalVideo-Portrait`, `BrandVideo-Landscape`, and `BrandVideo-Portrait`.
 - **Live Props Inspector**: Edit titles, subtitles, color tokens, and layout blocks live in the sidebar with Hot Module Reloading (HMR).
 - **Safe Zone Guides**: Toggle mobile overlay guides to ensure titles avoid TikTok/Instagram buttons and comment regions.
 
@@ -81,9 +84,32 @@ Open `storyboard.html` in any browser to review the visual cut timeline, scene c
 
 ---
 
-## 🚀 Universal Prompt Mode
+## 🎬 Two Creative Engines
 
-Generate videos on any concept directly from the command line:
+Brand Video Studio provides two distinct generation modes depending on your input source:
+
+```
+                     ┌──────────────────────────────────────────────┐
+                     │            Brand Video Studio CLI            │
+                     └──────┬────────────────────────────────┬──────┘
+                            │                                │
+                 --prompt   │                                │ --url
+                            ▼                                ▼
+┌──────────────────────────────────────┐  ┌──────────────────────────────────────┐
+│ ENGINE 1: Universal Prompt Mode      │  │ ENGINE 2: Brag Scraping Mode         │
+│ • Any concept or topic               │  │ • Any website or GitHub repo URL     │
+│ • Dynamic durations (15s – 120s+)    │  │ • Automated Puppeteer DOM scraping   │
+│ • 5-Layer Amalgam Motion Canvas      │  │ • 20s High-Energy Launch Storyboard  │
+│ • Rough.js, Matter.js, Watercolor    │  │ • Procedural Mascots & Live Viewport │
+│ • Reference rhythm & pacing analysis │  │ • Frame 0 poster & brand.config.json │
+└──────────────────────────────────────┘  └──────────────────────────────────────┘
+```
+
+---
+
+## 🚀 Engine 1: Universal Prompt Mode
+
+Generate motion videos on any concept or creative prompt:
 
 ```bash
 # 1. Standard 20s Landscape video on Tech
@@ -98,6 +124,61 @@ pnpm studio --prompt "Ancient Rome Caesars and Gladiators" --duration 30 --forma
 # 4. Instant Pre-Visualization (No Chromium render)
 pnpm studio --prompt "Champions League Final Tactics" --format vertical --preview-only
 ```
+
+---
+
+## 🌐 Engine 2: Website & GitHub Repo Scraping (Brag Skill)
+
+The **Brag Skill** automates the entire product launch video workflow for software developers and creators. You pass a website URL or GitHub repository URL, and the engine handles everything:
+
+```bash
+# 1. Launch 16:9 Landscape Video for Web, YouTube & X (Twitter):
+pnpm studio --url https://github.com/my-org/my-project
+
+# 2. Launch 9:16 Portrait Video for TikTok, Reels & Shorts with Coder Mascot:
+pnpm studio --url https://my-saas-app.com --format vertical --character coder
+
+# 3. Fast-Paced Playful Trailer with Spherical Waving Mascot:
+pnpm studio --url https://my-portfolio.dev --tone playful --character mascot
+
+# 4. Minimalist UI Launch without character mascot:
+pnpm studio --url https://my-app.com --character none
+```
+
+### How the Brag Scraping Pipeline Operates:
+1. **Automated Headless Chrome DOM Inspection:**
+   - Puppeteer launches an isolated, SSRF-hardened Chrome instance.
+   - Discovers project title, headings (`<h1>`, `<title>`, `<meta property="og:title">`).
+   - Extracts product tagline and description (`<meta name="description">`).
+   - Analyzes CSS custom properties to detect brand background, foreground, and accent colors.
+   - Captures crisp 1080p desktop viewports (`hero-live.png`) of the application in action.
+2. **Synthesizes a 20-Second High-Energy Launch Storyboard:**
+   - **Scene 1: Problem Hook (3.0s)**: Bold question challenging legacy workflows (e.g., *"Still writing 800-line God Classes?"* or *"Tired of slow, bloated software?"*) with whoosh sound effect.
+   - **Scene 2: Product Reveal (4.0s)**: Animated brand title, tagline, and procedural character mascot.
+   - **Scene 3: Architectural Highlight (4.5s)**: Feature cards and trade-off analysis.
+   - **Scene 4: Live Interactive Showcase (5.5s)**: Live interactive simulators, Monaco code typing, or high-velocity feature previews.
+   - **Scene 5: Outro & Call to Action (3.0s)**: Verified repository / website URL with settled chime cue.
+3. **Instant Re-rendering & Customization via `brand.config.json`:**
+   When you run `--url`, the engine saves `output/<slug>/brand.config.json`. You can tweak any text or colors in this file and re-render in seconds:
+   ```bash
+   pnpm studio --config output/my-project/brand.config.json
+   ```
+4. **Frame 0 Poster & Social Share Copy:**
+   - Captures Frame 555 (18.5s) as `brag.jpg` and bakes it into Frame 0 of `brag.mp4` with FastStart streaming headers.
+   - Generates ready-to-post launch copy (`share-copy.txt`) for Twitter/X, LinkedIn, and GitHub Releases.
+
+---
+
+## 🤖 Animated Characters & Mascots (`--character <type>`)
+
+The studio includes `<AnimatedCharacter />` (`src/composition/components/AnimatedCharacter.tsx`), a procedural SVG animated mascot with zero external asset dependencies:
+
+| Character Type | Visual Behavior | CLI Flag |
+| :--- | :--- | :--- |
+| **`coder`** (Default) | Droid character with animated typing arms oscillating on laptop keys, screen visor displaying color-coded code syntax, periodic eye blinking, and floating breathing bobbing. | `--character coder` |
+| **`mascot`** | Spherical floating robot with energy thruster pulse, glowing dual-node antenna with spring pulse, and waving right hand gesturing toward CTAs. | `--character mascot` |
+| **`none`** | Disables all character overlays for a clean, minimal UI-only trailer. | `--character none` |
+| **Custom Image** | Provide any local PNG/JPG image file, and the engine automatically mounts and floats your custom mascot sheet. | `--character path/to/character.png` |
 
 ---
 
@@ -154,10 +235,10 @@ The studio integrates 8 specialized tools into a cohesive visual pipeline:
 
 ## 📱 Dual Aspect Ratio Engine
 
-| Format | Resolution | Safe Zone Clearance | Primary Target |
-| :--- | :---: | :---: | :--- |
-| **`landscape`** (Default) | `1920 × 1080` | Full 1080p bleed, 16:9 | Laptops, Desktops, YouTube, Twitter/X, Web |
-| **`vertical`** | `1080 × 1920` | Top 15% header safe, Bottom 20% thumb safe | YouTube Shorts, Instagram Reels, TikTok |
+| Format | Resolution | Safe Zone Clearance | Primary Target | Remotion Compositions |
+| :--- | :---: | :---: | :--- | :--- |
+| **`landscape`** (Default) | `1920 × 1080` | Full 1080p bleed, 16:9 | Laptops, Desktops, YouTube, Twitter/X, Web | `UniversalVideo-Landscape`, `BrandVideo-Landscape` |
+| **`vertical`** | `1080 × 1920` | Top 15% header safe, Bottom 20% thumb safe | YouTube Shorts, Instagram Reels, TikTok | `UniversalVideo-Portrait`, `BrandVideo-Portrait` |
 
 ---
 
@@ -203,11 +284,14 @@ pnpm studio doctor
 
 ### 4. Generate Your First Video
 ```bash
-# Instant storyboard review:
-pnpm studio --prompt "Autonomous AI Agents Launch" --preview-only
-
-# Full 1080p render:
+# Option A: From any Concept Prompt (1080p Master):
 pnpm studio --prompt "Autonomous AI Agents Launch" --duration 15 --format landscape
+
+# Option B: From any Live Website or GitHub Repo (Brag Trailer):
+pnpm studio --url https://github.com/your-username/your-repo --format vertical
+
+# Option C: Instant Zero-Cost Storyboard Review:
+pnpm studio --prompt "Autonomous AI Agents Launch" --preview-only
 ```
 
 ---
@@ -245,12 +329,21 @@ pnpm run typecheck
 Deliverables are cleanly organized under `output/<title-slug>/`:
 
 ```text
+# Prompt-Driven Project:
 output/quantum-computing-breakthrough/
 ├── video.mp4          # 1080p Master Video (Frame 0 poster baked + AAC stereo + faststart)
 ├── poster.jpg         # High-contrast settled thumbnail for YouTube & social cards
 ├── storyboard.html    # Interactive pre-visualization animatic with timeline review
 ├── manifest.json      # Dynamic polymorphic manifest governing all scene blocks
 └── share-copy.txt     # Platform-ready social launch caption
+
+# Scraped Website / GitHub Repo Project (Brag Skill):
+output/my-project/
+├── brag.mp4           # 20.0s 1080p Product Launch Trailer
+├── brag.jpg           # Settled Frame-0 thumbnail
+├── hero-live.png      # High-res 1080p desktop capture from Puppeteer
+├── brand.config.json  # Resolved brand snapshot for instant re-rendering
+└── share-copy.txt     # Platform-ready launch announcement copy
 ```
 
 ---

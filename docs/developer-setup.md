@@ -113,6 +113,25 @@ Extract pacing, cut frequency, and color mood from an existing video:
 pnpm studio --prompt "Next-Gen Database Engine" --reference inputs/inspiration/tech-launch.mp4
 ```
 
+### Mode 5: Website & GitHub Repo Scraping (The Brag Skill)
+Scrapes a live website or GitHub repository DOM, captures high-res 1080p desktop viewports, and builds a 20-second product launch trailer with procedural animated mascots:
+```bash
+# 1. 16:9 Landscape for Web & GitHub Releases:
+pnpm studio --url https://github.com/my-org/my-project
+
+# 2. 9:16 Portrait for Shorts / Reels / TikTok with animated coder mascot:
+pnpm studio --url https://my-saas-app.com --format vertical --character coder
+
+# 3. Minimal UI launch trailer without mascots:
+pnpm studio --url https://my-app.com --character none
+
+# 4. Instant re-render from custom brand config:
+pnpm studio --config output/my-project/brand.config.json
+```
+- Emits `output/<project-slug>/brag.mp4` with Frame 0 poster baked.
+- Extracts `output/<project-slug>/hero-live.png` desktop viewport capture.
+- Generates platform-ready social launch caption in `output/<project-slug>/share-copy.txt`.
+
 ---
 
 ## 5. Hardware & Low-RAM Rules
