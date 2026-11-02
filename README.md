@@ -1,9 +1,9 @@
 <div align="center">
 
-# 🎬 Brand Video Studio
+# 🎬 Autonomous Brand Video Studio (v2.0)
 
-**Autonomous, $0-cost programmatic brand video generation engine.**  
-*Built with React 19, Remotion, whisper.cpp, yt-dlp, and FFmpeg.*
+**Autonomous, prompt-driven motion graphics engine & programmatic video studio.**  
+*Synthesizes Remotion, FFmpeg, whisper.cpp, yt-dlp, and Hyperframes with the 5-Layer Amalgam Motion Architecture.*
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19.0-61dafb.svg?logo=react)](https://react.dev/)
@@ -15,260 +15,246 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
-  <a href="#why-brand-video-studio-repo-vs-ai-skill">Why This Repo vs AI Skill</a> •
-  <a href="#key-features">Key Features</a> •
-  <a href="#multi-format-support-169--916">16:9 & 9:16 Formats</a> •
-  <a href="#animated-characters--motion-graphics">Characters & Motion</a> •
-  <a href="#customizing-your-video">Customization</a> •
-  <a href="#audio-intelligence--music-tracks">Audio & Music</a> •
-  <a href="#quick-start">Quick Start</a> •
-  <a href="#cli-usage">CLI Usage</a>
+  <a href="#-overview--what-is-v20">Overview</a> •
+  <a href="#-key-capabilities">Key Capabilities</a> •
+  <a href="#-browser-ui--remotion-studio">Browser UI</a> •
+  <a href="#-universal-prompt-mode">Universal Prompt Mode</a> •
+  <a href="#-reference-video-inspiration-zero-copy">Reference Inspiration</a> •
+  <a href="#-the-5-layer-amalgam-motion-architecture">Amalgam Architecture</a> •
+  <a href="#-dual-aspect-ratio-engine">16:9 & 9:16 Formats</a> •
+  <a href="#-system-doctor--diagnostics">Doctor Command</a> •
+  <a href="#-quick-start">Quick Start</a>
 </p>
 
 </div>
 
 ---
 
-## 💡 Why Brand Video Studio? (Repo vs AI Skill)
+## 🌟 Overview: What is v2.0?
 
-### The Problem with AI Agent Prompt Skills (e.g. `/brag`)
-Agent skills (such as `latent-spaces/brag`) are markdown prompt files that instruct an LLM to improvise shell commands and scripts on the fly. While innovative, relying purely on a prompt skill has severe limitations:
-1. **Non-deterministic & Fragile:** LLMs hallucinate shell syntax, miss edge cases, and break when tools change.
-2. **Blind Black Box:** An agent skill runs in the background and dumps an MP4. You cannot scrub through frames, inspect animations, or hear audio in real time before rendering.
-3. **Repo Pollution:** Running ad-hoc video scripts inside your application repository pollutes your git history with gigabytes of raw frames, audio stems, and headless browser caches.
+**Brand Video Studio v2.0** evolves from a website scraper into a **Universal Autonomous Motion Studio**.
 
-### The Advantage of the Standalone Brand Video Studio Repository
-**Brand Video Studio** is a sovereign, production-grade video studio that runs locally:
-- **Zero Pollution:** Lives in its own repository (`H:\Projects\brand-video-studio`). Your target web apps stay 100% clean and untouched.
-- **Interactive Visual Scrubber (`pnpm dev`):** Open `http://localhost:3000` to scrub through your video frame-by-frame with synchronized live audio, hot-module reload, and visual prop editing.
-- **Strict Hexagonal Architecture & 100% Tested:** Core domain entities and use cases are decoupled from third-party tools via TypeScript Port interfaces, backed by a 16-test unit suite.
-- **Can Still Be Controlled by an Agent Skill:** You can trigger `pnpm studio` from an Antigravity slash command (`/brag`), giving you conversational speed with engine-grade stability.
+You provide a text prompt on **any topic** (*Technology, Science, History, News, Entertainment, Sports, SaaS*), and the engine:
+1. Deconstructs the concept into narrative beats with active visual progression every second (no frozen scenes).
+2. Optionally analyzes reference videos dropped in `inputs/inspiration/` to extract pacing, cut rhythm, and mood palette—**without copying or reusing any copyrighted video frames or text**.
+3. Outputs an instant, zero-cost **interactive HTML Storyboard Animatic** for immediate review.
+4. Renders cinematic 1080p video in dual aspect ratios (**16:9 Landscape** for laptops/desktops and **9:16 Portrait** for YouTube Shorts, Reels, and TikTok) via Remotion (React 19) and FFmpeg.
 
 ---
 
-## ✨ Key Features
+## ✨ Key Capabilities
 
-- 📱 **Dual Aspect Ratios (16:9 Landscape & 9:16 Portrait):** Render high-impact landscape videos for Twitter/X and YouTube, or vertical mobile videos for TikTok, Instagram Reels, and YouTube Shorts.
-- 🤖 **Procedural Animated Characters:** Built-in animated SVG mascots (`coder` and `mascot`) with spring-physics floating, procedural eye blinking, typing arms, and interactive speech moods.
-- 🎨 **Deep Customization via `brand.config.json`:** Customize titles, durations, brand colors, fonts, music, and character mascots without touching code.
-- 🌐 **Automated Live SPA Scraping:** Headless Chrome (Puppeteer) discovers your app, extracts page titles, detects brand colors, and captures crisp 1080p desktop viewports automatically.
-- ⚡ **Lightweight Speech Recognition via `whisper.cpp`:** Generates timed word-level caption tokens in <2 seconds using a quantized 77 MB model (`ggml-tiny.en.bin`), bypassing heavy Python/PyTorch dependencies.
-- 🎵 **Native Soundtrack & Audio Multiplexing:** Built-in CC-BY energetic soundtrack with automated 2-second outro fade curves, plus on-demand download via `yt-dlp`.
-- 🖼️ **Settled Frame-0 Poster Baking:** Automatically captures the optimal outro frame (Frame 555 / 18.5s) and injects it into Frame 0 of `brag.mp4` with FastStart streaming headers.
+| Capability | Description |
+| :--- | :--- |
+| **Universal Prompt Generation** | Generate motion videos on any topic (*Quantum Computing, Ancient Rome, Premier League, Breaking News*) without altering a single line of React code. |
+| **Zero-Copy Reference Inspiration** | Ingest reference MP4s to extract average cut hold times ($\Delta t_{\text{cut}}$) and speech cadence via pure code in 5–10s, synthesizing 100% original scripts. |
+| **Anti-Freeze Dynamic Pacing** | Content unfolds progressively (sub-beat stagger, stat counters, split comparisons, particle drops) so no visual frame sits static for $>2$s. |
+| **Dual Aspect Ratios (16:9 & 9:16)** | Render 1920×1080 (16:9) or 1080×1920 (9:16) with safe-zone thumb clearance and responsive WCAG-compliant typography. |
+| **Zero-Cost Pre-Visualization** | Generates an interactive `storyboard.html` in milliseconds, allowing visual review before launching Chromium rendering. |
+| **Hexagonal Core & Zero Hardcoding** | Dumb-component architecture where all visual parameters are governed by dynamic `VideoManifest` schemas and `src/const/` design tokens. |
+| **Hardened Security** | 100% command-injection free (argument arrays via `execFile`), SSRF intranet protection, and zero system path leaks. |
 
 ---
 
-## 📱 Multi-Format Support: 16:9 & 9:16
+## 🖥️ Browser UI & Remotion Studio
 
-Brand Video Studio natively supports both major video form factors out of the box:
+The studio provides two browser-based interfaces:
 
-| Format | Resolution | Aspect Ratio | Best For | Remotion Composition ID |
-| :--- | :---: | :---: | :--- | :--- |
-| **Landscape** | `1920 × 1080` | `16:9` | Desktop web, YouTube, Twitter/X, LinkedIn | `BrandVideo-Landscape` (or `BrandVideo`) |
-| **Portrait / Vertical** | `1080 × 1920` | `9:16` | TikTok, Instagram Reels, YouTube Shorts, Mobile | `BrandVideo-Portrait` |
-
-### Responsive Layout Engine
-The composition automatically adapts based on aspect ratio:
-* **Landscape:** Dual-column split layout with hook title on the left and interactive simulators / animated mascot on the right.
-* **Portrait:** Vertical mobile-first layout with high-contrast hook on top, centered animated mascot, compact card stacks, and kinetic subtitles docked in the thumb zone.
-
-### Rendering Different Formats via CLI
+### 1. Interactive Remotion Studio (`pnpm run dev`)
+Launch the built-in visual development environment:
 ```bash
-# Render 16:9 Landscape (Default)
-pnpm studio --url https://your-app.com --format landscape
-
-# Render 9:16 Portrait for Shorts / Reels / TikTok
-pnpm studio --url https://your-app.com --format vertical
+pnpm run dev
+# Opens http://localhost:3000
 ```
+- **Real-Time Playhead**: Scrub frame-by-frame through any scene with live audio and 30/60 fps playback.
+- **Composition Selector**: Switch between `UniversalVideo-Landscape`, `UniversalVideo-Portrait`, and `BrandVideo`.
+- **Live Props Inspector**: Edit titles, subtitles, color tokens, and layout blocks live in the sidebar with Hot Module Reloading (HMR).
+- **Safe Zone Guides**: Toggle mobile overlay guides to ensure titles avoid TikTok/Instagram buttons and comment regions.
 
----
-
-## 🤖 Animated Characters & Motion Graphics
-
-### Built-in Character Mascots
-The studio includes `<AnimatedCharacter />` (`src/composition/components/AnimatedCharacter.tsx`), a procedural SVG animated mascot with zero external asset dependencies:
-
-1. **`coder` Mascot:**
-   - Droid character with animated typing arms oscillating on laptop keys.
-   - Screen visor reflection displaying color-coded code syntax.
-   - Periodic eye blinking (calculated via modulo frame arithmetic).
-   - Floating breathing bobbing powered by sine wave motion.
-2. **`mascot` Droid:**
-   - Spherical floating robot with energy thruster pulse.
-   - Waving right hand gesturing toward calls-to-action.
-   - Glowing dual-node antenna with spring pulse.
-
-### Enabling or Toggling Characters
-You can select characters via CLI:
+### 2. Standalone HTML Animatic (`storyboard.html`)
+Generated automatically in every project build or via `--preview-only`:
 ```bash
-# Use coder mascot (default)
-pnpm studio --url https://your-app.com --character coder
-
-# Use friendly waving droid
-pnpm studio --url https://your-app.com --character mascot
-
-# Disable character for a purely minimal UI video
-pnpm studio --url https://your-app.com --character none
+pnpm studio --prompt "Quantum Computing Breakthrough in 30s" --preview-only
+# Emits output/quantum-computing-breakthrough/storyboard.html
 ```
+Open `storyboard.html` in any browser to review the visual cut timeline, scene cards, and narration beats before rendering.
 
 ---
 
-## 🛠️ Customizing Your Video
+## 🚀 Universal Prompt Mode
 
-You have 3 easy ways to customize your videos:
-
-### Method 1: Configuration File (`brand.config.json`)
-The most powerful way to customize. When you run `pnpm studio`, the engine automatically saves `output/<slug>/brand.config.json`. You can edit this file and re-render instantly:
+Generate videos on any concept directly from the command line:
 
 ```bash
-pnpm studio --config brand.config.example.json
-```
+# 1. Standard 20s Landscape video on Tech
+pnpm studio --prompt "Next-Gen Autonomous AI Agents"
 
-#### Example `brand.config.json`:
-```json
-{
-  "projectName": "My Custom SaaS",
-  "url": "https://mysaas.com",
-  "tagline": "AI Workflows in Seconds",
-  "format": "landscape",
-  "tone": "cinematic",
-  "character": {
-    "enabled": true,
-    "type": "coder"
-  },
-  "colors": {
-    "background": "#090d16",
-    "foreground": "#f8fafc",
-    "accent": "#f59e0b",
-    "secondaryAccent": "#06b6d4"
-  },
-  "scenes": [
-    {
-      "id": "scene-1-hook",
-      "type": "hook",
-      "title": "Tired of slow, repetitive data entry?",
-      "durationSeconds": 3.0
-    },
-    {
-      "id": "scene-2-reveal",
-      "type": "reveal",
-      "title": "Meet AutoFlow",
-      "subtitle": "Zero-code automation powered by Next.js",
-      "durationSeconds": 4.0
-    },
-    {
-      "id": "scene-5-outro",
-      "type": "outro",
-      "title": "Start Free Today.",
-      "subtitle": "https://mysaas.com",
-      "durationSeconds": 3.0
-    }
-  ]
-}
-```
+# 2. 60s Landscape deep-dive on Science
+pnpm studio --prompt "Quantum Coherence and Superposition" --duration 60 --topic science
 
-### Method 2: Interactive Remotion Studio (`pnpm dev`)
-1. Run `pnpm dev`.
-2. Open `http://localhost:3000` in your browser.
-3. Switch between `BrandVideo-Landscape` and `BrandVideo-Portrait` in the left sidebar.
-4. Scrub frame-by-frame with live audio.
-5. Use the **Props Panel** on the right to edit text, colors, and characters live with instant Hot Module Reloading (HMR).
+# 3. 30s Vertical Portrait for Shorts / Reels / TikTok
+pnpm studio --prompt "Ancient Rome Caesars and Gladiators" --duration 30 --format vertical
 
-### Method 3: CLI Flags
-Override any setting directly from the command line:
-```bash
-pnpm studio --url https://example.com --format vertical --character mascot --tone playful
+# 4. Instant Pre-Visualization (No Chromium render)
+pnpm studio --prompt "Champions League Final Tactics" --format vertical --preview-only
 ```
 
 ---
 
-## 🎵 Audio Intelligence & Music Tracks
+## 🎯 Reference Video Inspiration (Zero-Copy)
 
-### Do You Need to Manually Download Audio?
-**No.** The studio handles audio automatically:
-1. **Bundled Default Soundtrack:** The studio includes a curated, high-energy CC-BY soundtrack (`public/soundtrack.mp3` & `assets/music/soundtrack.mp3` from `ende.app`). Every video automatically plays this track with a smooth 2-second outro fade.
-2. **Interactive Audio Preview:** Audio is rendered natively by Remotion's `<Audio />` component during preview (`pnpm dev`) and muxed via FFmpeg in final production.
-3. **Voiceover Transcription:** If you place a voiceover recording (`voice.wav`) in the project folder, native C++ `whisper.cpp` (`ggml-tiny.en.bin`) automatically extracts word-by-word timestamps into `captions.json` and renders synchronized kinetic subtitles.
-4. **On-Demand Music Sourcing:** The `YtDlpAdapter` can download any royalty-free audio URL on the fly via `yt-dlp`.
+Want your video to match the pacing, energy, or color mood of an existing video without copyright infringement?
+
+1. Drop any reference video into `inputs/inspiration/`:
+   ```bash
+   inputs/inspiration/
+   └── tech-launch-reference.mp4
+   ```
+   *(Or pass a direct URL or path via `--reference <url|path>`)*
+
+2. Run the studio:
+   ```bash
+   pnpm studio --prompt "Next-Gen Database Engine" --reference inputs/inspiration/tech-launch-reference.mp4
+   ```
+
+3. **What Happens (Pure Code, 5–10s):**
+   - **Scene Cut Detection**: FFmpeg analyzes visual scene transitions (`select='gt(scene,0.3)'`) to calculate average shot hold time (e.g. 2.1s fast cuts vs. 5.2s deep-dive holds).
+   - **Speech Cadence**: `whisper.cpp` measures speech pace (words per minute).
+   - **Color Harmony**: Extracts dominant contrast tones.
+   - **Original Script Synthesis**: The engine uses the measured pacing metrics to structure an **entirely original** script and layout schema. **Zero video frames, text, or copyrighted assets are copied.**
+
+---
+
+## 🎨 The 5-Layer Amalgam Motion Architecture
+
+The studio integrates 8 specialized tools into a cohesive visual pipeline:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Layer 5: Narration & Kinetic Captions (Whisper.cpp)             │
+├─────────────────────────────────────────────────────────────────┤
+│ Layer 4: Organic Artistry & Sketch (Rough.js + p5.brush)        │
+├─────────────────────────────────────────────────────────────────┤
+│ Layer 3: Newtonian Rigid Bodies (Matter.js Physics Drops)       │
+├─────────────────────────────────────────────────────────────────┤
+│ Layer 2: Hero Launch Hooks & Comparisons (Brag Core Blocks)     │
+├─────────────────────────────────────────────────────────────────┤
+│ Layer 1: Living Atmospheric Canvas (Remotion + Anime.js Shimmer)│
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Visual Style Archetypes (`--style <name>`)
+- **`amalgam`** (Default): Harmonious blend of Brag hooks, Rough.js diagrams, Matter.js physics drops, and Anime.js data flows.
+- **`physics-3d`**: Sleek perspective cards with gravity-driven falling badges and bouncy settle collisions.
+- **`rough-whiteboard`**: Hand-drawn sketchy architectural topology and hachure shading.
+- **`organic-watercolor`**: Natural pigment bleeds, parchment grain, and vector Perlin noise fields.
+- **`kinetic-vector`**: High-speed vector pipelines and electric circuit traces.
+
+---
+
+## 📱 Dual Aspect Ratio Engine
+
+| Format | Resolution | Safe Zone Clearance | Primary Target |
+| :--- | :---: | :---: | :--- |
+| **`landscape`** (Default) | `1920 × 1080` | Full 1080p bleed, 16:9 | Laptops, Desktops, YouTube, Twitter/X, Web |
+| **`vertical`** | `1080 × 1920` | Top 15% header safe, Bottom 20% thumb safe | YouTube Shorts, Instagram Reels, TikTok |
+
+---
+
+## 🔍 System Doctor & Diagnostics
+
+Verify your local or server environment prerequisites at any time:
+
+```bash
+pnpm studio doctor
+```
+
+Example diagnostic report:
+```text
+🔍 Running Brand Video Studio System Doctor...
+
+✅ [OK]   Node.js Runtime            : v22.13.0
+✅ [OK]   System Memory (RAM)        : 4.8 GB free / 16.0 GB total
+✅ [OK]   FFmpeg Core Tool           : 9.0.2-full_build-www.gyan.dev
+✅ [OK]   Chrome / Chromium          : Detected on host
+✅ [OK]   Whisper.cpp Speech Intel   : Local binary ready
+
+System Health Assessment: All Systems Operational 🚀
+```
 
 ---
 
 ## 🚀 Quick Start
 
 ### 1. Prerequisites
-Ensure you have **Node.js 20+**, **pnpm 9+**, and **FFmpeg** installed.
+Ensure **Node.js 20+**, **pnpm 9+**, and **FFmpeg** are installed on your machine.
 
-```bash
-# Verify system tools
-node -v
-pnpm -v
-ffmpeg -version
-```
-
-### 2. Clone & Install
+### 2. Installation
 ```bash
 git clone https://github.com/your-username/brand-video-studio.git
 cd brand-video-studio
 pnpm install
 ```
 
-### 3. Launch Remotion Studio Preview
+### 3. Verify Health
 ```bash
-pnpm dev
-# Opens http://localhost:3000
+pnpm studio doctor
 ```
 
-### 4. Generate a Full Video Deliverable
+### 4. Generate Your First Video
 ```bash
-# Generate 16:9 Landscape video:
-pnpm studio --url https://design-patterns-cyan.vercel.app/
+# Instant storyboard review:
+pnpm studio --prompt "Autonomous AI Agents Launch" --preview-only
 
-# Generate 9:16 Portrait Shorts/TikTok video with mascot:
-pnpm studio --url https://design-patterns-cyan.vercel.app/ --format vertical --character mascot
+# Full 1080p render:
+pnpm studio --prompt "Autonomous AI Agents Launch" --duration 15 --format landscape
 ```
 
 ---
 
-## 🧪 Testing & Quality Gates
+## 🧪 Testing & Verification
 
 Run the comprehensive unit test suite:
 ```bash
 pnpm run test:unit
 ```
 ```text
-✔ GenerateBrandVideoUseCase (Hexagonal Orchestration)
-✔ BrandProject Entity
-✔ CaptionTrack Value Object
-✔ Scene Value Object
-✔ Storyboard Value Object
-✔ VideoDeliverable Entity
-ℹ tests 16 | pass 16 | fail 0
+✔ FileSystemStorageAdapter (3 tests)
+✔ Security & SSRF Hardening (4 tests)
+✔ GenerateBrandVideoUseCase (1 test)
+✔ GenerateScriptBreakdownUseCase (4 tests)
+✔ BrandProject Entity (3 tests)
+✔ CaptionTrack Value Object (4 tests)
+✔ Scene Value Object (2 tests)
+✔ Storyboard Value Object (4 tests)
+✔ VideoDeliverable Entity (2 tests)
+✔ VideoManifest Domain Entity (5 tests)
+✔ HtmlAnimaticGeneratorAdapter (2 tests)
+ℹ tests 34 | pass 34 | fail 0
 ```
 
-Verify strict TypeScript compilation:
+Verify zero TypeScript compilation errors:
 ```bash
 pnpm run typecheck
-# tsc --noEmit (0 errors)
 ```
 
 ---
 
 ## 📦 Output Deliverables
 
-Deliverables are cleanly written to `output/<project-slug>/`:
+Deliverables are cleanly organized under `output/<title-slug>/`:
 
 ```text
-output/design-patterns/
-├── brag.mp4          # 20.0s 1080p MP4 (Frame 0 poster baked + 192k AAC stereo audio + faststart)
-├── brag.jpg          # High-contrast settled thumbnail for YouTube, X, and LinkedIn
-├── hero-live.png     # Automated 1920x1080 desktop capture from Puppeteer
-├── brand.config.json # Resolved configuration snapshot ready for instant customization
-├── remotion.mp4      # Raw composition render
-└── share-copy.txt    # Platform-ready social launch caption
+output/quantum-computing-breakthrough/
+├── video.mp4          # 1080p Master Video (Frame 0 poster baked + AAC stereo + faststart)
+├── poster.jpg         # High-contrast settled thumbnail for YouTube & social cards
+├── storyboard.html    # Interactive pre-visualization animatic with timeline review
+├── manifest.json      # Dynamic polymorphic manifest governing all scene blocks
+└── share-copy.txt     # Platform-ready social launch caption
 ```
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+Distributed under the **MIT License**. See `LICENSE` for details.

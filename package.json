@@ -19,7 +19,8 @@
     "puppeteer": "^24.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "remotion": "^4.0.260"
+    "remotion": "^4.0.260",
+    "roughjs": "^4.6.6"
   },
   "devDependencies": {
     "@types/node": "^22.13.0",
@@ -28,6 +29,11 @@
     "hyperframes": "^0.8.223",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "undici": ">=7.29.1",
+      "basic-ftp": ">=6.2.1"
+    }
   }
 }
-

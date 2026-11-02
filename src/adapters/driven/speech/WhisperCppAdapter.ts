@@ -1,26 +1,50 @@
-import { exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import * as fs from 'node:fs/promises';
+import * as nfs from 'node:fs';
 import * as path from 'node:path';
 import { IAudioIntelligencePort } from '../../../application/ports/outbound/IAudioIntelligencePort.js';
 import { CaptionTrack, WordTimestamp } from '../../../domain/value-objects/CaptionTrack.js';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export class WhisperCppAdapter implements IAudioIntelligencePort {
   private readonly cliPath: string;
   private readonly modelPath: string;
 
   constructor(cliPath?: string, modelPath?: string) {
-    this.cliPath = cliPath || path.resolve('tools/whisper/Release/whisper-cli.exe');
+    if (cliPath && nfs.existsSync(cliPath)) {
+      this.cliPath = cliPath;
+    } else {
+      const isWin = process.platform === 'win32';
+      const defaultWinPath = path.resolve('tools/whisper/Release/whisper-cli.exe');
+      const defaultUnixPath = path.resolve('tools/whisper/Release/whisper-cli');
+
+      if (isWin && nfs.existsSync(defaultWinPath)) {
+        this.cliPath = defaultWinPath;
+      } else if (!isWin && nfs.existsSync(defaultUnixPath)) {
+        this.cliPath = defaultUnixPath;
+      } else {
+        this.cliPath = isWin ? defaultWinPath : 'whisper-cli';
+      }
+    }
+
     this.modelPath = modelPath || path.resolve('tools/whisper/ggml-tiny.en.bin');
   }
 
   public async transcribe(audioFilePath: string): Promise<CaptionTrack> {
     const outputPrefix = audioFilePath.replace(/\.[^/.]+$/, '');
-    const cmd = `"${this.cliPath}" -m "${this.modelPath}" -f "${audioFilePath}" -ojf -of "${outputPrefix}"`;
+    const args = [
+      '-m',
+      this.modelPath,
+      '-f',
+      path.resolve(audioFilePath),
+      '-ojf',
+      '-of',
+      outputPrefix
+    ];
 
-    await execAsync(cmd);
+    await execFileAsync(this.cliPath, args);
 
     const jsonPath = `${outputPrefix}.json`;
     const rawContent = await fs.readFile(jsonPath, 'utf-8');
@@ -47,4 +71,3 @@ export class WhisperCppAdapter implements IAudioIntelligencePort {
     return new CaptionTrack(words);
   }
 }
-

@@ -1,6 +1,7 @@
 import { BrandProject } from '../../../domain/entities/BrandProject.js';
 import { Storyboard } from '../../../domain/value-objects/Storyboard.js';
 import { CaptionTrack } from '../../../domain/value-objects/CaptionTrack.js';
+import { VideoManifest } from '../../../domain/entities/VideoManifest.js';
 
 export interface RenderConfig {
   fps: 30 | 60;
@@ -31,5 +32,10 @@ export interface IVideoRendererPort {
     captions: CaptionTrack | null,
     config: RenderConfig
   ): Promise<RenderResult>;
+  renderManifest?(
+    manifest: VideoManifest,
+    config: RenderConfig
+  ): Promise<RenderResult>;
 }
+
 

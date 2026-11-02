@@ -30,6 +30,8 @@ tools/whisper/*.tar.gz
 *.temp
 *.part
 *.ytdl
+inputs/inspiration/*
+!inputs/inspiration/.gitkeep
 
 # Puppeteer / Headless Browser Cache
 .cache/
